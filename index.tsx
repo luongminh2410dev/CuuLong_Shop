@@ -21,7 +21,7 @@ const BRAND_NAME = "CỬU LONG";
 const HOTLINE = "0916 446 769";
 const ADDRESS = "KM 90, QL 5 Mới, Hồng Bàng, TP. Hải Phòng";
 // Logo image URL (using a representative placeholder or a transparent PNG based on the provided design)
-const LOGO_URL = "https://i.ibb.co/Kjdhrg92/1b4842b2-5a18-4265-8b62-2365a62d52ad.png";
+const LOGO_URL = "https://i.ibb.co/KpxYY6zW/Chat-GPT-Image-Jan-26-2026-12-30-18-PM-1.png";
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>('home');
@@ -206,10 +206,8 @@ const App: React.FC = () => {
         <div
           className={`absolute top-0 right-0 w-[80%] max-w-sm h-full bg-white shadow-2xl transition-transform duration-500 ease-out flex flex-col rounded-l-[2.5rem] ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
         >
-          <div className="h-20 flex items-center justify-between px-8 border-b border-slate-50">
-            <div className="flex items-center gap-2">
-              <img src={LOGO_URL} alt={BRAND_NAME} className="h-10 w-auto object-contain" />
-            </div>
+          {/* Header chỉ có nút đóng */}
+          <div className="h-20 flex items-center justify-end px-8 border-b border-slate-50">
             <button
               onClick={() => setIsMobileMenuOpen(false)}
               className="p-2.5 bg-slate-100 text-slate-900 rounded-full hover:bg-orange-500 hover:text-white transition-all active:scale-90"
@@ -220,7 +218,15 @@ const App: React.FC = () => {
             </button>
           </div>
 
-          <div className="flex-grow flex flex-col justify-center px-8 space-y-2">
+          {/* Logo và menu items */}
+          <div className="flex-grow flex flex-col justify-center px-8 space-y-6">
+            {/* Logo */}
+            <div className="flex justify-center pb-4">
+              <img src={LOGO_URL} alt={BRAND_NAME} className="h-20 w-auto object-contain" />
+            </div>
+            
+            {/* Menu items */}
+            <div className="space-y-2">
             {[
               { label: 'Trang chủ', view: 'home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
               { label: 'Thiết bị', view: 'list', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
@@ -252,6 +258,7 @@ const App: React.FC = () => {
                 <span className="text-lg font-bold">{item.label}</span>
               </button>
             ))}
+            </div>
           </div>
 
           <div className="p-8 border-t border-slate-50">
@@ -276,8 +283,8 @@ const App: React.FC = () => {
       >
         <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 lg:h-20 flex items-center justify-between">
           <div className="flex items-center gap-1.5 lg:gap-2 cursor-pointer" onClick={() => { setCurrentView('home'); setSelectedCategory('Tất cả'); }}>
-            <div className="p-1 lg:p-1.5">
-              <img src={LOGO_URL} alt={BRAND_NAME} className="h-10 lg:h-12 w-auto object-contain" />
+            <div className="p-0.5 lg:p-1">
+              <img src={LOGO_URL} alt={BRAND_NAME} className="h-12 lg:h-16 w-auto object-contain" />
             </div>
           </div>
 
@@ -315,7 +322,7 @@ const App: React.FC = () => {
               <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[300px] lg:w-[500px] h-[300px] lg:h-[500px] bg-orange-100/50 rounded-full blur-3xl -z-10" />
               <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
                 <div className="flex-1 text-center lg:text-left">
-                  <h1 className="text-3xl md:text-5xl lg:text-5xl font-bold text-slate-900 leading-tight mb-4 lg:mb-6">
+                  <h1 className="text-2xl md:text-4xl lg:text-5xl lg:leading-[1.15] font-bold text-slate-900 leading-snug mb-4 lg:mb-6">
                     MÁY CÔNG TRÌNH <span className="text-orange-500">{BRAND_NAME}</span>
                   </h1>
                   <p className="text-base lg:text-xl text-slate-600 mb-6 lg:mb-8 max-w-2xl mx-auto lg:mx-0">
