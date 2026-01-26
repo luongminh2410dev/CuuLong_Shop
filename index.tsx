@@ -1,0 +1,660 @@
+
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { createRoot } from 'react-dom/client';
+import { GoogleGenAI } from '@google/genai';
+import { Equipment, LeasingPartner, ChatMessage } from './types';
+import { EQUIPMENT_DATA, LEASING_PARTNERS } from './constants';
+
+type ViewState = 'home' | 'list';
+
+const CATEGORIES = [
+  'Tất cả',
+  'Máy xúc đào',
+  'Máy xúc lật Liugong',
+  'Máy xúc lật mini',
+  'Máy ủi',
+  'San gạt',
+  'Máy lu'
+];
+
+const BRAND_NAME = "CỬU LONG";
+const HOTLINE = "0916 446 769";
+const ADDRESS = "KM 90, QL 5 Mới, Hồng Bàng, TP. Hải Phòng";
+// Logo image URL (using a representative placeholder or a transparent PNG based on the provided design)
+const LOGO_URL = "https://i.ibb.co/Kjdhrg92/1b4842b2-5a18-4265-8b62-2365a62d52ad.png"; 
+
+const App: React.FC = () => {
+  const [currentView, setCurrentView] = useState<ViewState>('home');
+  const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortOrder, setSortOrder] = useState<'none' | 'asc' | 'desc'>('none');
+  const [selectedCategory, setSelectedCategory] = useState('Tất cả');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { role: 'assistant', content: `Xin chào! Tôi là trợ lý ảo ${BRAND_NAME}. Bạn đang quan tâm đến dòng máy cơ giới nào hay cần tư vấn về thủ tục cho thuê tài chính?` }
+  ]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  const processedEquipment = useMemo(() => {
+    let result = [...EQUIPMENT_DATA];
+    
+    if (selectedCategory !== 'Tất cả') {
+      result = result.filter(item => {
+        if (selectedCategory === 'Máy xúc đào') return item.category === 'Máy Xúc Đào';
+        if (selectedCategory === 'Máy xúc lật Liugong') return item.category === 'Máy Xúc Lật' && item.brand === 'Liugong';
+        if (selectedCategory === 'Máy xúc lật mini') return item.category === 'Máy Xúc Lật' && item.name.toLowerCase().includes('mini');
+        if (selectedCategory === 'Máy ủi') return item.category === 'Máy Ủi';
+        if (selectedCategory === 'San gạt') return item.category === 'Máy San Gạt';
+        if (selectedCategory === 'Máy lu') return item.category === 'Máy Lu';
+        return true;
+      });
+    }
+
+    if (searchTerm.trim()) {
+      const lowTerm = searchTerm.toLowerCase();
+      result = result.filter(item => 
+        item.name.toLowerCase().includes(lowTerm) || 
+        item.brand.toLowerCase().includes(lowTerm) ||
+        item.category.toLowerCase().includes(lowTerm)
+      );
+    }
+
+    if (sortOrder === 'asc') {
+      result.sort((a, b) => a.price - b.price);
+    } else if (sortOrder === 'desc') {
+      result.sort((a, b) => b.price - a.price);
+    }
+
+    return result;
+  }, [searchTerm, sortOrder, selectedCategory]);
+
+  const handleSendMessage = async (customMsg?: string) => {
+    const msgToSend = customMsg || input.trim();
+    if (!msgToSend || isLoading) return;
+
+    if (!customMsg) setInput('');
+    setMessages(prev => [...prev, { role: 'user', content: msgToSend }]);
+    setIsLoading(true);
+
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: [
+          {
+            parts: [{
+              text: `Bạn là trợ lý ảo chuyên nghiệp cho website ${BRAND_NAME} - chuyên bán máy công trình và liên kết với các công ty cho thuê tài chính. 
+              Địa chỉ: ${ADDRESS}, Hotline: ${HOTLINE}.
+              Dữ liệu máy hiện có: ${JSON.stringify(EQUIPMENT_DATA)}. 
+              Hãy trả lời ngắn gọn, thân thiện. Người dùng nói: ${msgToSend}`
+            }]
+          }
+        ]
+      });
+
+      const aiResponse = response.text || 'Xin lỗi, tôi gặp sự cố khi xử lý yêu cầu.';
+      setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
+    } catch (error) {
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Rất tiếc, đã có lỗi xảy ra.' }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+  };
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    e.currentTarget.src = 'https://images.unsplash.com/photo-1541625602330-2277a4c4b28d?auto=format&fit=crop&q=80&w=800';
+  };
+
+  const openChatWithProduct = (product: Equipment) => {
+    setSelectedEquipment(null);
+    const chatWindow = document.getElementById('chat-window');
+    if (chatWindow) chatWindow.classList.remove('hidden');
+    handleSendMessage(`Tôi muốn tư vấn mua trả góp máy ${product.name}`);
+  };
+
+  const CategorySelector = ({ className = "" }: { className?: string }) => (
+    <div className={`overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide lg:overflow-visible lg:pb-0 lg:mx-0 lg:px-0 ${className}`}>
+      <div className="flex flex-nowrap lg:flex-wrap gap-2 min-w-max lg:min-w-0">
+        {CATEGORIES.map(cat => (
+          <button
+            key={cat}
+            onClick={() => setSelectedCategory(cat)}
+            className={`px-4 py-2.5 lg:px-5 lg:py-2.5 rounded-2xl text-xs lg:text-sm font-bold transition-all whitespace-nowrap ${
+              selectedCategory === cat 
+                ? 'bg-orange-500 text-white shadow-lg shadow-orange-200' 
+                : 'bg-white border-2 border-slate-100 text-slate-600 hover:border-orange-200'
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  const EquipmentCard = ({ item }: { item: Equipment }) => (
+    <div 
+      key={item.id} 
+      onClick={() => setSelectedEquipment(item)}
+      className="group bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col cursor-pointer"
+    >
+      <div className="relative h-48 overflow-hidden">
+        <img 
+          src={item.image} 
+          alt={item.name} 
+          onError={handleImageError}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+        />
+        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] lg:text-xs font-bold text-slate-800 uppercase tracking-wider">
+          {item.brand}
+        </div>
+      </div>
+      <div className="p-5 lg:p-6 flex-grow flex flex-col">
+        <h3 className="text-base lg:text-lg font-bold text-slate-900 mb-2 leading-snug h-12 overflow-hidden line-clamp-2">{item.name}</h3>
+        <div className="grid grid-cols-2 gap-2 mb-4 text-[10px] lg:text-xs text-slate-500">
+          <div className="bg-slate-50 p-2 rounded-xl text-center">
+            <span className="block font-semibold text-slate-800">{item.specs.weight}</span>
+            Cân nặng
+          </div>
+          <div className="bg-slate-50 p-2 rounded-xl text-center">
+            <span className="block font-semibold text-slate-800">{item.specs.power}</span>
+            Công suất
+          </div>
+        </div>
+        <div className="mt-auto">
+          <div className="text-orange-600 font-bold text-lg lg:text-xl mb-4">{formatPrice(item.price)}</div>
+          <button className="w-full bg-slate-900 text-white py-3 rounded-2xl font-bold text-sm hover:bg-orange-500 transition-colors">
+            Xem chi tiết
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen flex flex-col relative overflow-x-hidden">
+      {/* Refined Mobile Side Drawer with Animation */}
+      <div 
+        className={`fixed inset-0 z-[100] transition-all duration-500 ${isMobileMenuOpen ? 'visible' : 'invisible'}`}
+      >
+        {/* Backdrop overlay */}
+        <div 
+          className={`absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-500 ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0'}`} 
+          onClick={() => setIsMobileMenuOpen(false)} 
+        />
+        
+        {/* Side Panel */}
+        <div 
+          className={`absolute top-0 right-0 w-[80%] max-w-sm h-full bg-white shadow-2xl transition-transform duration-500 ease-out flex flex-col rounded-l-[2.5rem] ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        >
+          <div className="h-20 flex items-center justify-between px-8 border-b border-slate-50">
+            <div className="flex items-center gap-2">
+              <img src={LOGO_URL} alt={BRAND_NAME} className="h-10 w-auto object-contain" />
+            </div>
+            <button 
+              onClick={() => setIsMobileMenuOpen(false)} 
+              className="p-2.5 bg-slate-100 text-slate-900 rounded-full hover:bg-orange-500 hover:text-white transition-all active:scale-90"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <div className="flex-grow flex flex-col justify-center px-8 space-y-2">
+            {[
+              { label: 'Trang chủ', view: 'home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
+              { label: 'Thiết bị', view: 'list', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
+              { label: 'Tài chính', hash: '#leasing', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+              { label: 'Liên hệ', icon: 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z' }
+            ].map((item, idx) => (
+              <button 
+                key={idx}
+                onClick={() => {
+                  if (item.view) {
+                    setCurrentView(item.view as ViewState);
+                    setSelectedCategory('Tất cả');
+                  }
+                  if (item.hash) {
+                    setCurrentView('home');
+                    window.location.hash = item.hash;
+                  }
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`flex items-center gap-5 w-full p-5 rounded-[1.5rem] text-left transition-all duration-300 transform ${isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'} ${
+                  (item.view === currentView) ? 'bg-orange-500 text-white shadow-xl shadow-orange-200' : 'bg-white text-slate-800 hover:bg-slate-50 border border-transparent'
+                }`}
+                style={{ transitionDelay: `${150 + idx * 75}ms` }}
+              >
+                <div className={`p-2 rounded-xl ${item.view === currentView ? 'bg-white/20' : 'bg-slate-100'}`}>
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon} />
+                  </svg>
+                </div>
+                <span className="text-lg font-bold">{item.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="p-8 border-t border-slate-50">
+            <a 
+              href={`tel:${HOTLINE.replace(/\s/g, '')}`} 
+              className="flex items-center justify-center gap-3 w-full bg-slate-900 text-white py-5 rounded-[1.5rem] font-bold text-lg shadow-xl shadow-slate-200 active:scale-95 transition-transform"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 005.47 5.47l.773-1.548a1 1 0 011.06-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 12.18 2 5V3z" />
+              </svg>
+              {HOTLINE}
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 lg:h-20 flex items-center justify-between">
+          <div className="flex items-center gap-1.5 lg:gap-2 cursor-pointer" onClick={() => {setCurrentView('home'); setSelectedCategory('Tất cả');}}>
+            <div className="p-1 lg:p-1.5">
+              <img src={LOGO_URL} alt={BRAND_NAME} className="h-10 lg:h-12 w-auto object-contain" />
+            </div>
+          </div>
+          
+          <div className="hidden lg:flex items-center gap-8">
+            <button onClick={() => {setCurrentView('home'); setSelectedCategory('Tất cả');}} className={`${currentView === 'home' ? 'text-orange-500' : 'text-slate-600'} hover:text-orange-500 font-medium transition-colors`}>Trang chủ</button>
+            <button onClick={() => setCurrentView('list')} className={`${currentView === 'list' ? 'text-orange-500' : 'text-slate-600'} hover:text-orange-500 font-medium transition-colors`}>Thiết bị</button>
+            <a href="#leasing" onClick={() => setCurrentView('home')} className="text-slate-600 hover:text-orange-500 font-medium transition-colors">Tài chính</a>
+            <a href="#" className="text-slate-600 hover:text-orange-500 font-medium transition-colors">Liên hệ</a>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <a href={`tel:${HOTLINE.replace(/\s/g, '')}`} className="bg-slate-900 text-white px-3.5 py-2 lg:px-6 lg:py-2.5 rounded-full text-xs lg:text-sm font-semibold hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-slate-200 flex items-center gap-1.5 md:gap-2">
+              <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 005.47 5.47l.773-1.548a1 1 0 011.06-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+              </svg>
+              <span className="hidden sm:inline">Hotline:</span> {HOTLINE}
+            </a>
+            <button 
+              className="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-all active:scale-90" 
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <main className="flex-grow">
+        {currentView === 'home' ? (
+          <>
+            {/* Hero Section */}
+            <section className="relative py-12 lg:py-20 px-4 overflow-hidden animate-in fade-in duration-500">
+              <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[300px] lg:w-[500px] h-[300px] lg:h-[500px] bg-orange-100/50 rounded-full blur-3xl -z-10" />
+              <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+                <div className="flex-1 text-center lg:text-left">
+                  <h1 className="text-3xl md:text-5xl lg:text-7xl font-extrabold text-slate-900 leading-tight mb-4 lg:mb-6 uppercase">
+                    {BRAND_NAME} <span className="text-orange-500">MÁY CÔNG TRÌNH</span>
+                  </h1>
+                  <p className="text-base lg:text-xl text-slate-600 mb-6 lg:mb-8 max-w-2xl mx-auto lg:mx-0">
+                    Phân phối thiết bị cơ giới chất lượng cao tại Hải Phòng cùng giải pháp tài chính linh hoạt nhất.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                    <button 
+                      onClick={() => setCurrentView('list')}
+                      className="bg-orange-500 text-white px-6 py-3.5 lg:px-8 lg:py-4 rounded-2xl font-bold text-base lg:text-lg hover:bg-orange-600 transition-all shadow-xl shadow-orange-200"
+                    >
+                      Xem danh mục máy
+                    </button>
+                    <a href={`tel:${HOTLINE.replace(/\s/g, '')}`} className="bg-white border-2 border-slate-200 text-slate-700 px-6 py-3.5 lg:px-8 lg:py-4 rounded-2xl font-bold text-base lg:text-lg hover:bg-slate-50 transition-all text-center">
+                      Liên hệ ngay
+                    </a>
+                  </div>
+                </div>
+                <div className="flex-1 w-full max-w-lg lg:max-none relative mt-4 lg:mt-0">
+                  <div className="bg-white p-2 lg:p-4 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-2xl rotate-1 lg:rotate-2 hover:rotate-0 transition-transform duration-500">
+                    <img 
+                      src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=1000" 
+                      alt="Heavy Machinery" 
+                      onError={handleImageError}
+                      className="rounded-[1.2rem] lg:rounded-[2rem] w-full h-[250px] lg:h-[400px] object-cover"
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Service Commitment Section */}
+            <section className="py-12 lg:py-20 bg-slate-50">
+              <div className="max-w-7xl mx-auto px-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                  <div className="bg-white p-6 lg:p-8 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-sm border border-slate-100 group hover:shadow-xl hover:border-orange-200 transition-all duration-300">
+                    <div className="w-12 h-12 lg:w-16 lg:h-16 bg-orange-100 rounded-xl lg:rounded-2xl flex items-center justify-center mb-6 group-hover:bg-orange-500 transition-colors">
+                      <svg className="w-6 h-6 lg:w-8 lg:h-8 text-orange-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg lg:text-xl font-bold text-slate-900 mb-3 lg:mb-4">Đảm Bảo Chất Lượng</h3>
+                    <p className="text-slate-600 text-xs lg:text-sm leading-relaxed">
+                      Toàn bộ máy móc tại {BRAND_NAME} đều là hàng nhập khẩu chính ngạch 100%, có đầy đủ CO/CQ.
+                    </p>
+                  </div>
+
+                  <div className="bg-white p-6 lg:p-8 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-sm border border-slate-100 group hover:shadow-xl hover:border-orange-200 transition-all duration-300">
+                    <div className="w-12 h-12 lg:w-16 lg:h-16 bg-blue-100 rounded-xl lg:rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors">
+                      <svg className="w-6 h-6 lg:w-8 lg:h-8 text-blue-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg lg:text-xl font-bold text-slate-900 mb-3 lg:mb-4">Bảo Hành Dài Hạn</h3>
+                    <p className="text-slate-600 text-xs lg:text-sm leading-relaxed">
+                      Cam kết bảo hành lên tới 24 tháng. Đội ngũ kỹ sư lưu động sẵn sàng hỗ trợ tận nơi.
+                    </p>
+                  </div>
+
+                  <div className="bg-white p-6 lg:p-8 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-sm border border-slate-100 group hover:shadow-xl hover:border-orange-200 transition-all duration-300">
+                    <div className="w-12 h-12 lg:w-16 lg:h-16 bg-green-100 rounded-xl lg:rounded-2xl flex items-center justify-center mb-6 group-hover:bg-green-600 transition-colors">
+                      <svg className="w-6 h-6 lg:w-8 lg:h-8 text-green-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg lg:text-xl font-bold text-slate-900 mb-3 lg:mb-4">Hỗ Trợ Toàn Diện</h3>
+                    <p className="text-slate-600 text-xs lg:text-sm leading-relaxed">
+                      Hỗ trợ trọn gói thủ tục đăng ký, đăng kiểm giúp doanh nghiệp an tâm vận hành.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Featured Equipment Grid (Home) */}
+            <section id="equipment" className="py-12 lg:py-24 bg-white">
+              <div className="max-w-7xl mx-auto px-4">
+                <div className="mb-8 lg:mb-12">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
+                    <div>
+                      <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-2">Sản phẩm nổi bật</h2>
+                      <div className="w-16 h-1.5 bg-orange-500 rounded-full" />
+                    </div>
+                    <button 
+                      onClick={() => setCurrentView('list')}
+                      className="text-orange-600 font-bold hover:gap-2 flex items-center transition-all text-sm lg:text-base"
+                    >
+                      Xem tất cả
+                      <svg className="w-4 h-4 lg:w-5 lg:h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </button>
+                  </div>
+                  <CategorySelector className="mb-4 lg:mb-8" />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                  {processedEquipment.slice(0, 8).map((item) => (
+                    <EquipmentCard key={item.id} item={item} />
+                  ))}
+                </div>
+              </div>
+            </section>
+          </>
+        ) : (
+          /* Equipment List View */
+          <section className="py-8 lg:py-12 bg-white animate-in slide-in-from-right-4 fade-in duration-500 min-h-screen">
+            <div className="max-w-7xl mx-auto px-4">
+              <div className="flex flex-col gap-6 lg:gap-8 mb-8 lg:mb-12">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  <div>
+                    <button 
+                      onClick={() => setCurrentView('home')}
+                      className="flex items-center text-slate-500 hover:text-orange-500 mb-2 lg:mb-4 transition-colors font-medium text-sm"
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                      </svg>
+                      Trang chủ
+                    </button>
+                    <h2 className="text-2xl lg:text-4xl font-extrabold text-slate-900 uppercase">Danh mục thiết bị {BRAND_NAME}</h2>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <div className="relative group flex-grow md:min-w-[300px]">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                      <input 
+                        type="text" 
+                        placeholder="Tìm theo tên máy..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="block w-full pl-11 pr-4 py-3.5 lg:py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                      />
+                    </div>
+                    <div className="relative">
+                      <select 
+                        value={sortOrder}
+                        onChange={(e) => setSortOrder(e.target.value as any)}
+                        className="block w-full md:w-56 pl-4 pr-10 py-3.5 lg:py-4 bg-white border-2 border-slate-200 rounded-2xl text-slate-700 font-bold text-sm appearance-none shadow-sm"
+                      >
+                        <option value="none">Sắp xếp: Mặc định</option>
+                        <option value="asc">Giá: Thấp đến cao</option>
+                        <option value="desc">Giá: Cao đến thấp</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                        <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-slate-50 p-4 lg:p-6 rounded-[1.5rem] lg:rounded-[2.5rem] border border-slate-100">
+                  <h4 className="text-[10px] lg:text-xs font-black text-slate-400 uppercase tracking-widest mb-3 lg:mb-4">Bộ lọc sản phẩm</h4>
+                  <CategorySelector />
+                </div>
+              </div>
+
+              {processedEquipment.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                  {processedEquipment.map((item) => (
+                    <EquipmentCard key={item.id} item={item} />
+                  ))}
+                </div>
+              ) : (
+                <div className="py-20 text-center bg-slate-50 rounded-[1.5rem] lg:rounded-[3rem] border-2 border-dashed border-slate-200">
+                  <h3 className="text-lg lg:text-xl font-bold text-slate-800 mb-2">Không tìm thấy sản phẩm</h3>
+                  <button 
+                    onClick={() => { setSearchTerm(''); setSortOrder('none'); setSelectedCategory('Tất cả'); }}
+                    className="mt-4 bg-slate-900 text-white px-6 py-2.5 rounded-xl font-bold text-sm"
+                  >
+                    Xóa tất cả bộ lọc
+                  </button>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* Leasing Partners */}
+        {currentView === 'home' && (
+          <section id="leasing" className="py-12 lg:py-24 bg-slate-50 border-y border-slate-200">
+            <div className="max-w-7xl mx-auto px-4 text-center mb-12 lg:mb-16">
+              <h2 className="text-2xl lg:text-4xl font-bold text-slate-900 mb-4 uppercase">Giải pháp tài chính {BRAND_NAME}</h2>
+              <p className="text-sm lg:text-base text-slate-600 max-w-2xl mx-auto">Chúng tôi hợp tác với các định chế hàng đầu mang đến phương án tối ưu cho quý khách tại Hải Phòng và toàn quốc.</p>
+            </div>
+            <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {LEASING_PARTNERS.map((partner) => (
+                <div key={partner.name} className="bg-white p-6 lg:p-8 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-sm border border-slate-200 hover:border-orange-500 transition-colors group flex flex-col">
+                  <div className="h-16 lg:h-20 flex flex-col items-center justify-center mb-6 lg:mb-8 gap-2">
+                     <div className="w-12 h-12 lg:w-16 lg:h-16 bg-slate-50 rounded-xl lg:rounded-2xl flex items-center justify-center group-hover:bg-orange-50 transition-colors overflow-hidden p-2">
+                        <img 
+                          src={partner.logo} 
+                          alt={partner.name} 
+                          className="w-full h-full object-contain opacity-70 group-hover:opacity-100 transition-opacity"
+                        />
+                     </div>
+                     <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{partner.name.split(' ')[0]}</div>
+                  </div>
+                  <h3 className="text-lg lg:text-xl font-bold text-slate-900 mb-3 lg:mb-4">{partner.name}</h3>
+                  <p className="text-slate-600 mb-6 text-xs lg:text-sm leading-relaxed flex-grow">{partner.description}</p>
+                  <div className="space-y-2 lg:space-y-3 mb-6 lg:mb-8">
+                    {partner.highlights.map(h => (
+                      <div key={h} className="flex items-center gap-2 text-xs lg:text-sm font-medium text-slate-700">
+                        <div className="w-4 h-4 lg:w-5 lg:h-5 bg-orange-100 rounded-full flex items-center justify-center shrink-0">
+                          <svg className="w-2.5 h-2.5 lg:w-3 lg:h-3 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        {h}
+                      </div>
+                    ))}
+                  </div>
+                  <a href={partner.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-orange-600 font-bold text-sm">
+                    Website đối tác
+                    <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </a>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+      </main>
+
+      {/* Product Detail Modal */}
+      {selectedEquipment && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-2 sm:p-4 lg:p-8 animate-in fade-in duration-300">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSelectedEquipment(null)} />
+          <div className="relative w-full max-w-6xl bg-white rounded-[1.5rem] lg:rounded-[3rem] shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[95vh] lg:max-h-[90vh] animate-in slide-in-from-bottom-8 duration-500">
+            <button onClick={() => setSelectedEquipment(null)} className="absolute top-4 right-4 z-10 w-10 h-10 lg:w-12 lg:h-12 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-lg hover:bg-orange-500 transition-all">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <div className="h-48 sm:h-64 md:h-auto md:w-1/2 bg-slate-100 shrink-0">
+              <img src={selectedEquipment.image} alt={selectedEquipment.name} onError={handleImageError} className="w-full h-full object-cover" />
+            </div>
+            <div className="md:w-1/2 p-6 lg:p-12 overflow-y-auto">
+              <span className="inline-block px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3 lg:mb-4">{selectedEquipment.category}</span>
+              <h2 className="text-xl lg:text-4xl font-extrabold text-slate-900 mb-4 lg:mb-6">{selectedEquipment.name}</h2>
+              <div className="grid grid-cols-2 gap-3 lg:gap-4 mb-8">
+                  <div className="p-3 lg:p-4 bg-slate-50 rounded-xl border border-slate-100 text-sm">
+                    <p className="text-[9px] text-slate-500 mb-1 uppercase font-bold">Trọng lượng</p>
+                    <p className="font-bold">{selectedEquipment.specs.weight}</p>
+                  </div>
+                  <div className="p-3 lg:p-4 bg-slate-50 rounded-xl border border-slate-100 text-sm">
+                    <p className="text-[9px] text-slate-500 mb-1 uppercase font-bold">Công suất</p>
+                    <p className="font-bold">{selectedEquipment.specs.power}</p>
+                  </div>
+              </div>
+              <div className="p-4 lg:p-6 bg-orange-50 rounded-[1.2rem] lg:rounded-3xl mb-6 lg:mb-8 border border-orange-100">
+                <p className="font-bold text-slate-900 mb-1 text-sm lg:text-base">Gói trả góp ước tính:</p>
+                <p className="text-xl lg:text-3xl font-black text-orange-600">{formatPrice(Math.round(selectedEquipment.price * 0.02))} <span className="text-[10px] lg:text-sm text-slate-500 font-normal">/ tháng</span></p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button onClick={() => openChatWithProduct(selectedEquipment)} className="flex-1 bg-slate-900 text-white py-3 lg:py-4 rounded-xl lg:rounded-2xl font-bold text-sm lg:text-base shadow-lg shadow-slate-200">Nhận báo giá</button>
+                <button onClick={() => {setSelectedEquipment(null); setCurrentView('home'); window.location.hash='#leasing';}} className="flex-1 bg-white border-2 border-slate-200 text-slate-700 py-3 lg:py-4 rounded-xl lg:rounded-2xl font-bold text-sm lg:text-base transition-colors hover:bg-slate-50">Tài chính</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* AI Assistant Chat Bubble */}
+      <div className="fixed bottom-4 right-4 lg:bottom-8 lg:right-8 z-[90]">
+        <div className="relative">
+          <button onClick={() => document.getElementById('chat-window')?.classList.toggle('hidden')} className="w-12 h-12 lg:w-16 lg:h-16 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-2xl hover:bg-orange-500 transition-colors active:scale-95">
+            <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            </svg>
+          </button>
+          <div id="chat-window" className="hidden absolute bottom-16 right-0 lg:bottom-24 w-[280px] sm:w-[350px] lg:w-[400px] h-[450px] lg:h-[550px] bg-white rounded-[1.5rem] lg:rounded-3xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in slide-in-from-bottom-4 duration-300">
+            <div className="bg-slate-900 p-4 lg:p-6 text-white flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 lg:w-10 lg:h-10 bg-orange-500 rounded-full flex items-center justify-center shadow-lg">
+                  <svg className="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                </div>
+                <h4 className="font-bold text-sm lg:text-base">{BRAND_NAME} AI</h4>
+              </div>
+              <button onClick={() => document.getElementById('chat-window')?.classList.add('hidden')} className="p-1 hover:bg-white/10 rounded-full transition-colors"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
+            </div>
+            <div ref={scrollRef} className="flex-grow p-4 overflow-y-auto space-y-4 bg-slate-50 scroll-smooth">
+              {messages.map((m, i) => (
+                <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[85%] p-3 lg:p-4 rounded-2xl text-xs lg:text-sm ${m.role === 'user' ? 'bg-orange-500 text-white rounded-br-none shadow-md' : 'bg-white text-slate-700 shadow-sm border border-slate-100 rounded-bl-none'}`}>{m.content}</div>
+                </div>
+              ))}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 flex gap-1">
+                    <div className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce" />
+                    <div className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce [animation-delay:-.15s]" />
+                    <div className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce [animation-delay:-.3s]" />
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="p-3 lg:p-4 border-t bg-white shrink-0">
+              <div className="flex gap-2">
+                <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Hỏi về máy..." className="flex-grow px-4 py-2.5 bg-slate-100 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-orange-500 border border-transparent transition-all" />
+                <button onClick={() => handleSendMessage()} disabled={isLoading} className="w-10 h-10 lg:w-12 lg:h-12 bg-slate-900 text-white rounded-xl flex items-center justify-center hover:bg-orange-500 transition-colors disabled:opacity-50"><svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer className="bg-slate-900 text-slate-400 py-12 lg:py-16 px-4">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 text-sm">
+          <div className="col-span-1 lg:col-span-2 space-y-4">
+             <div className="flex items-center gap-2">
+                <div className="p-1">
+                  <img src={LOGO_URL} alt={BRAND_NAME} className="h-12 w-auto object-contain" />
+                </div>
+             </div>
+             <p className="max-w-xs leading-relaxed uppercase font-bold text-xs">{BRAND_NAME} - MÁY CÔNG TRÌNH & PHÂN PHỐI</p>
+             <p className="max-w-xs leading-relaxed">Thiết bị cơ giới chất lượng hàng đầu và giải pháp tài chính linh hoạt cho doanh nghiệp.</p>
+             <p className="text-slate-300">Địa chỉ: {ADDRESS}</p>
+          </div>
+          <div>
+            <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-xs">Liên kết</h4>
+            <ul className="space-y-2">
+              <li><button onClick={() => setCurrentView('home')} className="hover:text-orange-500 transition-colors">Trang chủ</button></li>
+              <li><button onClick={() => setCurrentView('list')} className="hover:text-orange-500 transition-colors">Thiết bị</button></li>
+              <li><a href="#leasing" className="hover:text-orange-500 transition-colors">Giải pháp tài chính</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-xs">Liên hệ hỗ trợ</h4>
+            <ul className="space-y-2">
+              <li><a href="#" className="hover:text-orange-500 transition-colors text-slate-300">Chính sách bảo hành</a></li>
+              <li><a href={`tel:${HOTLINE.replace(/\s/g, '')}`} className="hover:text-orange-500 transition-colors font-bold text-white uppercase tracking-wider">Hotline: {HOTLINE}</a></li>
+            </ul>
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-800 text-center text-xs opacity-50 uppercase tracking-[0.2em]">
+          © 2024 {BRAND_NAME} MÁY CÔNG TRÌNH. All rights reserved.
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+createRoot(document.getElementById('root')!).render(<App />);
