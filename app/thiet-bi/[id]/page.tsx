@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         },
       ],
       url: `${SITE_URL}/thiet-bi/${id}`,
-      type: 'product',
+      type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
