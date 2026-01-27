@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Equipment } from '@/types';
 import { EQUIPMENT_DATA, LEASING_PARTNERS } from '@/constants';
 import { BRAND_NAME, HOTLINE, ADDRESS } from '@/lib/constants';
+import { formatPrice, getProductImage, handleImageError, scrollToImage } from '@/lib/utils';
 import Navigation from './Navigation';
 
 interface ProductDetailPageProps {
@@ -19,61 +20,147 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
       ? [product.image] 
       : ['/images/fallback.png'];
   
-  const [selectedImage, setSelectedImage] = useState(productImages[0]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const isScrollingRef = useRef(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isUserScrollingRef = useRef(false);
+
+  // Khởi tạo refs array khi số lượng ảnh thay đổi
+  useEffect(() => {
+    imageRefs.current = imageRefs.current.slice(0, productImages.length);
+  }, [productImages.length]);
+
+  // Hàm để reset timer
+  const resetAutoSlide = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+      scrollTimeoutRef.current = null;
+    }
+  };
+
+  // Scroll đến ảnh được chọn
+  useEffect(() => {
+    if (imageRefs.current[currentImageIndex] && scrollContainerRef.current && !isUserScrollingRef.current) {
+      isScrollingRef.current = true;
+      const targetImage = imageRefs.current[currentImageIndex];
+      const container = scrollContainerRef.current;
+      
+      if (targetImage && container) {
+        scrollToImage(container, targetImage);
+      }
+      
+      // Reset flag sau khi scroll xong
+      setTimeout(() => {
+        isScrollingRef.current = false;
+      }, 500);
+    }
+  }, [currentImageIndex]);
+
+  // Hàm khởi động lại auto-slide timer
+  const startAutoSlide = () => {
+    if (productImages.length > 1 && !isPaused) {
+      intervalRef.current = setInterval(() => {
+        setCurrentImageIndex((prevIndex) => {
+          const nextIndex = (prevIndex + 1) % productImages.length;
+          return nextIndex;
+        });
+      }, 4000);
+    }
+  };
+
+  // Xử lý khi user scroll thủ công
+  const handleScroll = () => {
+    if (!scrollContainerRef.current || isScrollingRef.current) return;
+    
+    isUserScrollingRef.current = true;
+    
+    // Clear timeout cũ nếu có
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+    
+    const container = scrollContainerRef.current;
+    const containerRect = container.getBoundingClientRect();
+    const containerCenter = containerRect.left + containerRect.width / 2;
+    
+    // Tìm ảnh gần nhất với center của container
+    let newIndex = 0;
+    let minDistance = Infinity;
+    
+    imageRefs.current.forEach((ref, index) => {
+      if (ref) {
+        const rect = ref.getBoundingClientRect();
+        const imageCenter = rect.left + rect.width / 2;
+        const distance = Math.abs(imageCenter - containerCenter);
+        
+        if (distance < minDistance) {
+          minDistance = distance;
+          newIndex = index;
+        }
+      }
+    });
+    
+    // Cập nhật index nếu thay đổi
+    if (newIndex !== currentImageIndex && newIndex >= 0 && newIndex < productImages.length) {
+      setCurrentImageIndex(newIndex);
+      resetAutoSlide();
+      
+      // Khởi động lại timer sau khi user scroll xong
+      scrollTimeoutRef.current = setTimeout(() => {
+        isUserScrollingRef.current = false;
+        startAutoSlide();
+      }, 1000);
+    }
+  };
 
   // Auto-slide images mỗi 4 giây
   useEffect(() => {
     if (productImages.length <= 1 || isPaused) {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+      resetAutoSlide();
       return;
     }
 
-    intervalRef.current = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => {
-        const nextIndex = (prevIndex + 1) % productImages.length;
-        setSelectedImage(productImages[nextIndex]);
-        return nextIndex;
-      });
-    }, 4000); // 4 giây
+    resetAutoSlide();
+    startAutoSlide();
 
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      resetAutoSlide();
     };
   }, [productImages, isPaused]);
 
-  // Cập nhật selectedImage khi currentImageIndex thay đổi từ thumbnail click
-  useEffect(() => {
-    setSelectedImage(productImages[currentImageIndex]);
-  }, [currentImageIndex, productImages]);
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
-  };
-
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    // Tránh vòng lặp vô hạn - chỉ set fallback một lần
-    if (!e.currentTarget.src.includes('/images/fallback.png')) {
-      e.currentTarget.src = '/images/fallback.png';
-    }
+  // Hàm xử lý khi người dùng chọn ảnh (thumbnail hoặc dot)
+  const handleImageSelect = (index: number) => {
+    if (index === currentImageIndex) return;
+    
+    // Reset flag để đảm bảo scroll được trigger
+    isUserScrollingRef.current = false;
+    
+    // Reset timer khi user chọn ảnh để đếm lại từ đầu
+    resetAutoSlide();
+    setCurrentImageIndex(index);
+    
+    // Scroll đến ảnh được chọn
+    requestAnimationFrame(() => {
+      if (imageRefs.current[index] && scrollContainerRef.current) {
+        scrollToImage(scrollContainerRef.current, imageRefs.current[index]!);
+      }
+    });
+    
+    // Khởi động lại timer với thời gian mới (reset về 4 giây)
+    setTimeout(() => {
+      startAutoSlide();
+    }, 1000);
   };
 
   const monthlyPayment = Math.round(product.price * 0.02);
-
-  const getProductImage = (item: Equipment): string => {
-    // Lấy ảnh đầu tiên từ mảng images hoặc fallback về image (backward compatible)
-    if (item.images && item.images.length > 0) {
-      return item.images[0];
-    }
-    return item.image || '/images/fallback.png';
-  };
 
   const relatedProducts = useMemo(
     () =>
@@ -87,7 +174,16 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
     e.preventDefault();
     const leasingSection = document.getElementById('leasing');
     if (leasingSection) {
-      leasingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Chỉ áp dụng offset trên mobile (screen width < 1024px)
+      const isMobile = window.innerWidth < 1024;
+      const headerHeight = isMobile ? 64 : 0;
+      const elementPosition = leasingSection.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
   };
 
@@ -128,13 +224,30 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
                   onMouseEnter={() => setIsPaused(true)}
                   onMouseLeave={() => setIsPaused(false)}
                 >
-                  <img
-                    src={selectedImage}
-                    alt={product.name}
-                    onError={handleImageError}
-                    className="w-full h-full object-cover transition-opacity duration-500"
-                    key={selectedImage}
-                  />
+                  {/* Container scroll ngang */}
+                  <div 
+                    ref={scrollContainerRef}
+                    onScroll={handleScroll}
+                    className="w-full h-full flex overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-smooth"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                  >
+                    {productImages.map((img, index) => (
+                      <div
+                        key={`img-${index}`}
+                        ref={(el) => {
+                          imageRefs.current[index] = el;
+                        }}
+                        className="min-w-full h-full snap-center flex-shrink-0"
+                      >
+                        <img
+                          src={img}
+                          alt={`${product.name} - Ảnh ${index + 1}`}
+                          onError={handleImageError}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
                   <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-slate-800 uppercase tracking-wider">
                     {product.brand}
                   </div>
@@ -143,10 +256,7 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
                       {productImages.map((_, index) => (
                         <button
                           key={index}
-                          onClick={() => {
-                            setCurrentImageIndex(index);
-                            setSelectedImage(productImages[index]);
-                          }}
+                          onClick={() => handleImageSelect(index)}
                           className={`h-2 rounded-full transition-all ${
                             index === currentImageIndex
                               ? 'w-8 bg-white'
@@ -164,10 +274,7 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
                     {productImages.map((img, index) => (
                       <div
                         key={index}
-                        onClick={() => {
-                          setCurrentImageIndex(index);
-                          setSelectedImage(img);
-                        }}
+                        onClick={() => handleImageSelect(index)}
                         className={`aspect-square rounded-xl overflow-hidden cursor-pointer border-2 transition-all ${
                           currentImageIndex === index ? 'border-orange-500 ring-2 ring-orange-200' : 'border-slate-200 hover:border-orange-300'
                         }`}

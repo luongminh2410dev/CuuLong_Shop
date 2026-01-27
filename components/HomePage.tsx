@@ -7,6 +7,7 @@ import { GoogleGenAI } from '@google/genai';
 import { Equipment, ChatMessage } from '@/types';
 import { EQUIPMENT_DATA, LEASING_PARTNERS } from '@/constants';
 import { BRAND_NAME, HOTLINE, ADDRESS, LOGO_URL, CATEGORIES } from '@/lib/constants';
+import { formatPrice, getProductImage, handleImageError } from '@/lib/utils';
 import Navigation from './Navigation';
 
 export default function HomePage() {
@@ -94,24 +95,6 @@ export default function HomePage() {
     }
   };
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
-  };
-
-  const getProductImage = (item: Equipment): string => {
-    // Lấy ảnh đầu tiên từ mảng images hoặc fallback về image (backward compatible)
-    if (item.images && item.images.length > 0) {
-      return item.images[0];
-    }
-    return item.image || '/images/fallback.png';
-  };
-
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    // Tránh vòng lặp vô hạn - chỉ set fallback một lần
-    if (!e.currentTarget.src.includes('/images/fallback.png')) {
-      e.currentTarget.src = '/images/fallback.png';
-    }
-  };
 
   const openChatWithProduct = (product: Equipment) => {
     setSelectedEquipment(null);
@@ -296,7 +279,16 @@ export default function HomePage() {
         <section id="leasing" className="py-12 lg:py-24 bg-slate-50 border-y border-slate-200">
           <div className="max-w-7xl mx-auto px-4 text-center mb-12 lg:mb-16">
             <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-4">Giải pháp tài chính</h2>
-            <p className="text-sm lg:text-base text-slate-600 max-w-2xl mx-auto">Chúng tôi hợp tác với các định chế hàng đầu mang đến phương án tối ưu cho quý khách tại Hải Phòng và toàn quốc.</p>
+            <p className="text-sm lg:text-base text-slate-600 max-w-2xl mx-auto mb-6">Chúng tôi hợp tác với các định chế hàng đầu mang đến phương án tối ưu cho quý khách tại Hải Phòng và toàn quốc.</p>
+            <Link
+              href="/tai-chinh"
+              className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-2xl font-bold text-sm lg:text-base transition-colors shadow-lg shadow-orange-200"
+            >
+              <span>Tìm hiểu thêm về giải pháp tài chính</span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
           </div>
           <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {LEASING_PARTNERS.map((partner) => (

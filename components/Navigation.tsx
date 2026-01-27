@@ -18,6 +18,31 @@ export default function Navigation() {
 
   const isHome = pathname === '/';
   const isEquipment = pathname === '/thiet-bi';
+  const isAbout = pathname === '/ve-chung-toi';
+  const isFinancing = pathname === '/tai-chinh';
+
+  // Hàm xử lý scroll đến section với offset cho header (chỉ cho mobile)
+  const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, hash: string) => {
+    e.preventDefault();
+    setIsMobileMenuOpen(false);
+    
+    // Đợi một chút để menu đóng trước khi scroll
+    setTimeout(() => {
+      const element = document.querySelector(hash);
+      if (element) {
+        // Chỉ áp dụng offset trên mobile (screen width < 1024px)
+        const isMobile = window.innerWidth < 1024;
+        const headerHeight = isMobile ? 64 : 0; // Mobile: 64px, Desktop: không cần offset vì scrollIntoView đã đủ
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }, 100);
+  };
 
   return (
     <>
@@ -50,25 +75,34 @@ export default function Navigation() {
               {[
                 { label: 'Trang chủ', href: '/', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
                 { label: 'Thiết bị', href: '/thiet-bi', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
-                { label: 'Tài chính', href: '/#leasing', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
-                { label: 'Liên hệ', href: '/#contact', icon: 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z' }
-              ].map((item, idx) => (
-                <Link
-                  key={idx}
-                  href={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`flex items-center gap-5 w-full p-5 rounded-[1.5rem] text-left transition-all duration-300 transform ${isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'} ${(item.href === '/' && isHome) || (item.href === '/thiet-bi' && isEquipment) ? 'bg-orange-500 text-white shadow-xl shadow-orange-200' : 'bg-white text-slate-800 hover:bg-slate-50 border border-transparent'
-                    }`}
-                  style={{ transitionDelay: `${150 + idx * 75}ms` }}
-                >
-                  <div className={`p-2 rounded-xl ${((item.href === '/' && isHome) || (item.href === '/thiet-bi' && isEquipment)) ? 'bg-white/20' : 'bg-slate-100'}`}>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon} />
-                    </svg>
-                  </div>
-                  <span className="text-lg font-bold">{item.label}</span>
-                </Link>
-              ))}
+                { label: 'Tài chính', href: '/tai-chinh', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+                { label: 'Về chúng tôi', href: '/ve-chung-toi', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' }
+              ].map((item, idx) => {
+                const isHashLink = item.href.includes('#');
+                const isAboutPage = item.href === '/ve-chung-toi';
+                const isFinancingPage = item.href === '/tai-chinh';
+                const isActive = (item.href === '/' && isHome) || 
+                                 (item.href === '/thiet-bi' && isEquipment) || 
+                                 (isAboutPage && isAbout) ||
+                                 (isFinancingPage && isFinancing);
+                return (
+                  <Link
+                    key={idx}
+                    href={item.href}
+                    onClick={isHashLink ? (e) => handleScrollToSection(e, item.href.split('#')[1] ? `#${item.href.split('#')[1]}` : '') : () => setIsMobileMenuOpen(false)}
+                    className={`flex items-center gap-5 w-full p-5 rounded-[1.5rem] text-left transition-all duration-300 transform ${isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'} ${isActive ? 'bg-orange-500 text-white shadow-xl shadow-orange-200' : 'bg-white text-slate-800 hover:bg-slate-50 border border-transparent'
+                      }`}
+                    style={{ transitionDelay: `${150 + idx * 75}ms` }}
+                  >
+                    <div className={`p-2 rounded-xl ${isActive ? 'bg-white/20' : 'bg-slate-100'}`}>
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon} />
+                      </svg>
+                    </div>
+                    <span className="text-lg font-bold">{item.label}</span>
+                  </Link>
+                );
+              })}
             </div>
           </div>
           <div className="p-8 border-t border-slate-50">
@@ -101,8 +135,8 @@ export default function Navigation() {
           <div className="hidden lg:flex items-center gap-8">
             <Link href="/" className={`${isHome ? 'text-orange-500' : 'text-slate-600'} hover:text-orange-500 font-medium transition-colors`}>Trang chủ</Link>
             <Link href="/thiet-bi" className={`${isEquipment ? 'text-orange-500' : 'text-slate-600'} hover:text-orange-500 font-medium transition-colors`}>Thiết bị</Link>
-            <Link href="/#leasing" className="text-slate-600 hover:text-orange-500 font-medium transition-colors">Tài chính</Link>
-            <Link href="/#contact" className="text-slate-600 hover:text-orange-500 font-medium transition-colors">Liên hệ</Link>
+            <Link href="/tai-chinh" className={`${isFinancing ? 'text-orange-500' : 'text-slate-600'} hover:text-orange-500 font-medium transition-colors`}>Tài chính</Link>
+            <Link href="/ve-chung-toi" className={`${isAbout ? 'text-orange-500' : 'text-slate-600'} hover:text-orange-500 font-medium transition-colors`}>Về chúng tôi</Link>
           </div>
 
           <div className="flex items-center gap-2">

@@ -20,3 +20,22 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Slide animation cho product images */
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

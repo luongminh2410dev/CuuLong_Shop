@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Equipment } from '@/types';
 import { EQUIPMENT_DATA } from '@/constants';
 import { BRAND_NAME, CATEGORIES } from '@/lib/constants';
+import { formatPrice, getProductImage, handleImageError } from '@/lib/utils';
 import Navigation from './Navigation';
 
 export default function EquipmentPage() {
@@ -46,24 +47,6 @@ export default function EquipmentPage() {
     return result;
   }, [searchTerm, sortOrder, selectedCategory]);
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
-  };
-
-  const getProductImage = (item: Equipment): string => {
-    // Lấy ảnh đầu tiên từ mảng images hoặc fallback về image (backward compatible)
-    if (item.images && item.images.length > 0) {
-      return item.images[0];
-    }
-    return item.image || '/images/fallback.png';
-  };
-
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    // Tránh vòng lặp vô hạn - chỉ set fallback một lần
-    if (!e.currentTarget.src.includes('/images/fallback.png')) {
-      e.currentTarget.src = '/images/fallback.png';
-    }
-  };
 
   const CategorySelector = () => (
     <div className="overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide lg:overflow-visible lg:pb-0 lg:mx-0 lg:px-0">
