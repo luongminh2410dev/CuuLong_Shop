@@ -14,12 +14,12 @@ interface ProductDetailPageProps {
 
 export default function ProductDetailPage({ product }: ProductDetailPageProps) {
   // Lấy ảnh đầu tiên từ mảng images hoặc fallback về image (backward compatible)
-  const productImages = product.images && product.images.length > 0 
-    ? product.images 
-    : product.image 
-      ? [product.image] 
+  const productImages = product.images && product.images.length > 0
+    ? product.images
+    : product.image
+      ? [product.image]
       : ['/images/fallback.png'];
-  
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -52,11 +52,11 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
       isScrollingRef.current = true;
       const targetImage = imageRefs.current[currentImageIndex];
       const container = scrollContainerRef.current;
-      
+
       if (targetImage && container) {
         scrollToImage(container, targetImage);
       }
-      
+
       // Reset flag sau khi scroll xong
       setTimeout(() => {
         isScrollingRef.current = false;
@@ -79,40 +79,40 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
   // Xử lý khi user scroll thủ công
   const handleScroll = () => {
     if (!scrollContainerRef.current || isScrollingRef.current) return;
-    
+
     isUserScrollingRef.current = true;
-    
+
     // Clear timeout cũ nếu có
     if (scrollTimeoutRef.current) {
       clearTimeout(scrollTimeoutRef.current);
     }
-    
+
     const container = scrollContainerRef.current;
     const containerRect = container.getBoundingClientRect();
     const containerCenter = containerRect.left + containerRect.width / 2;
-    
+
     // Tìm ảnh gần nhất với center của container
     let newIndex = 0;
     let minDistance = Infinity;
-    
+
     imageRefs.current.forEach((ref, index) => {
       if (ref) {
         const rect = ref.getBoundingClientRect();
         const imageCenter = rect.left + rect.width / 2;
         const distance = Math.abs(imageCenter - containerCenter);
-        
+
         if (distance < minDistance) {
           minDistance = distance;
           newIndex = index;
         }
       }
     });
-    
+
     // Cập nhật index nếu thay đổi
     if (newIndex !== currentImageIndex && newIndex >= 0 && newIndex < productImages.length) {
       setCurrentImageIndex(newIndex);
       resetAutoSlide();
-      
+
       // Khởi động lại timer sau khi user scroll xong
       scrollTimeoutRef.current = setTimeout(() => {
         isUserScrollingRef.current = false;
@@ -139,21 +139,21 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
   // Hàm xử lý khi người dùng chọn ảnh (thumbnail hoặc dot)
   const handleImageSelect = (index: number) => {
     if (index === currentImageIndex) return;
-    
+
     // Reset flag để đảm bảo scroll được trigger
     isUserScrollingRef.current = false;
-    
+
     // Reset timer khi user chọn ảnh để đếm lại từ đầu
     resetAutoSlide();
     setCurrentImageIndex(index);
-    
+
     // Scroll đến ảnh được chọn
     requestAnimationFrame(() => {
       if (imageRefs.current[index] && scrollContainerRef.current) {
         scrollToImage(scrollContainerRef.current, imageRefs.current[index]!);
       }
     });
-    
+
     // Khởi động lại timer với thời gian mới (reset về 4 giây)
     setTimeout(() => {
       startAutoSlide();
@@ -203,13 +203,13 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
               {/* Product Images */}
               <div className="space-y-4">
-                <div 
+                <div
                   className="relative aspect-square bg-slate-100 rounded-3xl overflow-hidden"
                   onMouseEnter={() => setIsPaused(true)}
                   onMouseLeave={() => setIsPaused(false)}
                 >
                   {/* Container scroll ngang */}
-                  <div 
+                  <div
                     ref={scrollContainerRef}
                     onScroll={handleScroll}
                     className="w-full h-full flex overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-smooth"
@@ -225,7 +225,7 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
                       >
                         <img
                           src={img}
-                          alt={`${product.name} - Ảnh ${index + 1}`}
+                          alt={`${product.name} - ${product.brand} - Thumbnail ${index + 1} - ${BRAND_NAME} Máy Công Trình`}
                           onError={handleImageError}
                           className="w-full h-full object-cover"
                         />
@@ -241,11 +241,10 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
                         <button
                           key={index}
                           onClick={() => handleImageSelect(index)}
-                          className={`h-2 rounded-full transition-all ${
-                            index === currentImageIndex
+                          className={`h-2 rounded-full transition-all ${index === currentImageIndex
                               ? 'w-8 bg-white'
                               : 'w-2 bg-white/50 hover:bg-white/75'
-                          }`}
+                            }`}
                           aria-label={`Xem ảnh ${index + 1}`}
                         />
                       ))}
@@ -259,13 +258,12 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
                       <div
                         key={index}
                         onClick={() => handleImageSelect(index)}
-                        className={`aspect-square rounded-xl overflow-hidden cursor-pointer border-2 transition-all ${
-                          currentImageIndex === index ? 'border-orange-500 ring-2 ring-orange-200' : 'border-slate-200 hover:border-orange-300'
-                        }`}
+                        className={`aspect-square rounded-xl overflow-hidden cursor-pointer border-2 transition-all ${currentImageIndex === index ? 'border-orange-500 ring-2 ring-orange-200' : 'border-slate-200 hover:border-orange-300'
+                          }`}
                       >
                         <img
                           src={img}
-                          alt={`${product.name} - Ảnh ${index + 1}`}
+                          alt={`${product.name} - ${product.brand} - Thumbnail ${index + 1} - ${BRAND_NAME} Máy Công Trình`}
                           onError={handleImageError}
                           className="w-full h-full object-cover"
                         />
@@ -382,7 +380,7 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
                       <div className="relative h-44 overflow-hidden">
                         <img
                           src={getProductImage(item)}
-                          alt={item.name}
+                          alt={`${item.name} - ${item.brand} - ${item.category} - Sản phẩm liên quan - ${BRAND_NAME} Máy Công Trình`}
                           onError={handleImageError}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         />

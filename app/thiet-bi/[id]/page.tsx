@@ -37,13 +37,20 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return {
     title: `${product.name} - ${BRAND_NAME} Máy Công Trình | Giá ${formatPrice(product.price)}`,
     description,
-    keywords: `${product.name}, ${product.brand}, ${product.category}, máy công trình, ${BRAND_NAME}, Hải Phòng, giá ${formatPrice(product.price)}, trả góp`,
+    keywords: [product.name, product.brand, product.category, 'máy công trình', BRAND_NAME, 'Hải Phòng', `giá ${formatPrice(product.price)}`, 'trả góp', 'mua máy công trình'],
     openGraph: {
       title: `${product.name} - ${BRAND_NAME}`,
       description: `${product.name} - ${product.brand}. Giá: ${formatPrice(product.price)}. Hỗ trợ trả góp tại Hải Phòng.`,
-      images: [productImage],
-        url: `${SITE_URL}/thiet-bi/${id}`,
-      type: 'website',
+      images: [
+        {
+          url: productImage,
+          width: 1200,
+          height: 630,
+          alt: `${product.name} - ${BRAND_NAME}`,
+        },
+      ],
+      url: `${SITE_URL}/thiet-bi/${id}`,
+      type: 'product',
     },
     twitter: {
       card: 'summary_large_image',
@@ -79,28 +86,34 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
-    image: product.images && product.images.length > 0 ? product.images : [productImage],
+    image: product.images && product.images.length > 0 ? product.images.map(img => `${SITE_URL}${img}`) : [`${SITE_URL}${productImage}`],
     description: `${product.name} - ${product.brand} - ${product.category}. Trọng lượng: ${product.specs.weight}, Công suất: ${product.specs.power}, Dung tích: ${product.specs.capacity}`,
     brand: {
       '@type': 'Brand',
       name: product.brand,
     },
     category: product.category,
+    sku: product.id,
+    mpn: product.id,
     offers: {
       '@type': 'Offer',
       price: product.price,
       priceCurrency: 'VND',
       availability: 'https://schema.org/InStock',
-        url: `${SITE_URL}/thiet-bi/${id}`,
+      url: `${SITE_URL}/thiet-bi/${id}`,
+      priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       seller: {
         '@type': 'LocalBusiness',
         name: `${BRAND_NAME} Máy Công Trình`,
+        url: SITE_URL,
       },
     },
     aggregateRating: {
       '@type': 'AggregateRating',
       ratingValue: '4.8',
       reviewCount: '24',
+      bestRating: '5',
+      worstRating: '1',
     },
   };
 
