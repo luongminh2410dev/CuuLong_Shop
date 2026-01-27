@@ -198,13 +198,13 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
         </section>
 
         {/* Product Detail */}
-        <section className="py-8 lg:py-12 bg-white">
+        <section className="py-6 lg:py-8 bg-white">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4">
               {/* Product Images */}
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <div
-                  className="relative aspect-square bg-slate-100 rounded-3xl overflow-hidden"
+                  className="relative bg-slate-100 rounded-2xl lg:rounded-3xl overflow-hidden h-[350px] lg:h-[400px] xl:h-[450px]"
                   onMouseEnter={() => setIsPaused(true)}
                   onMouseLeave={() => setIsPaused(false)}
                 >
@@ -253,12 +253,12 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
                 </div>
                 {/* Thumbnail images gallery */}
                 {productImages.length > 1 && (
-                  <div className="grid grid-cols-4 gap-3">
+                  <div className="grid grid-cols-4 gap-1 max-w-xs">
                     {productImages.map((img, index) => (
                       <div
                         key={index}
                         onClick={() => handleImageSelect(index)}
-                        className={`aspect-square rounded-xl overflow-hidden cursor-pointer border-2 transition-all ${currentImageIndex === index ? 'border-orange-500 ring-2 ring-orange-200' : 'border-slate-200 hover:border-orange-300'
+                        className={`aspect-square rounded overflow-hidden cursor-pointer border transition-all ${currentImageIndex === index ? 'border-orange-500 ring-1 ring-orange-200 border-2' : 'border-slate-200 hover:border-orange-300 border'
                           }`}
                       >
                         <img
@@ -274,86 +274,86 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
               </div>
 
               {/* Product Info */}
-              <div className="space-y-6">
+              <div className="space-y-5">
                 <div>
-                  <span className="inline-block px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-xs font-bold uppercase tracking-wider mb-3">
+                  <span className="inline-block px-2.5 py-1 bg-orange-100 text-orange-600 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
                     {product.category}
                   </span>
-                  <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">{product.name}</h1>
-                  <div className="flex items-center gap-2 text-slate-600 mb-6">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-3">{product.name}</h1>
+                  <div className="flex items-center gap-2 text-slate-600 mb-4">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    <span className="text-sm">{ADDRESS}</span>
+                    <span className="text-xs lg:text-sm">{ADDRESS}</span>
                   </div>
                 </div>
 
                 {/* Price */}
-                <div className="p-6 bg-orange-50 rounded-3xl border border-orange-100">
-                  <p className="text-sm text-slate-600 mb-2">Giá bán</p>
-                  <p className="text-4xl lg:text-5xl font-black text-orange-600 mb-4">{formatPrice(product.price)}</p>
-                  <div className="pt-4 border-t border-orange-200">
-                    <p className="text-sm text-slate-600 mb-1">Gói trả góp ước tính</p>
-                    <p className="text-2xl font-bold text-slate-900">
-                      {formatPrice(monthlyPayment)} <span className="text-base font-normal text-slate-500">/ tháng</span>
+                <div className="p-5 bg-orange-50 rounded-2xl lg:rounded-3xl border border-orange-100">
+                  <p className="text-xs lg:text-sm text-slate-600 mb-1.5">Giá bán</p>
+                  <p className="text-3xl lg:text-4xl font-black text-orange-600 mb-3">{formatPrice(product.price)}</p>
+                  <div className="pt-3 border-t border-orange-200">
+                    <p className="text-xs lg:text-sm text-slate-600 mb-1">Gói trả góp ước tính</p>
+                    <p className="text-xl lg:text-2xl font-bold text-slate-900">
+                      {formatPrice(monthlyPayment)} <span className="text-sm font-normal text-slate-500">/ tháng</span>
                     </p>
-                    <p className="text-xs text-slate-500 mt-2">* Giá chỉ mang tính chất tham khảo</p>
+                    <p className="text-xs text-slate-500 mt-1.5">* Giá chỉ mang tính chất tham khảo</p>
                   </div>
                 </div>
 
                 {/* Specifications */}
-                <div className="bg-slate-50 rounded-3xl p-6 border border-slate-100">
-                  <h2 className="text-xl font-bold text-slate-900 mb-4">Thông số kỹ thuật</h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="bg-white p-4 rounded-2xl border border-slate-200">
+                <div className="bg-slate-50 rounded-2xl lg:rounded-3xl p-4 lg:p-5 border border-slate-100">
+                  <h2 className="text-lg lg:text-xl font-bold text-slate-900 mb-3">Thông số kỹ thuật</h2>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="bg-white p-3 lg:p-4 rounded-xl lg:rounded-2xl border border-slate-200">
                       <p className="text-xs text-slate-500 mb-1 uppercase font-bold">Trọng lượng</p>
-                      <p className="text-lg font-bold text-slate-900">{product.specs.weight}</p>
+                      <p className="text-base lg:text-lg font-bold text-slate-900">{product.specs.weight}</p>
                     </div>
-                    <div className="bg-white p-4 rounded-2xl border border-slate-200">
+                    <div className="bg-white p-3 lg:p-4 rounded-xl lg:rounded-2xl border border-slate-200">
                       <p className="text-xs text-slate-500 mb-1 uppercase font-bold">Công suất</p>
-                      <p className="text-lg font-bold text-slate-900">{product.specs.power}</p>
+                      <p className="text-base lg:text-lg font-bold text-slate-900">{product.specs.power}</p>
                     </div>
-                    <div className="bg-white p-4 rounded-2xl border border-slate-200">
+                    <div className="bg-white p-3 lg:p-4 rounded-xl lg:rounded-2xl border border-slate-200">
                       <p className="text-xs text-slate-500 mb-1 uppercase font-bold">Dung tích</p>
-                      <p className="text-lg font-bold text-slate-900">{product.specs.capacity}</p>
+                      <p className="text-base lg:text-lg font-bold text-slate-900">{product.specs.capacity}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col sm:flex-row gap-2.5">
                   <a
                     href={`tel:${HOTLINE.replace(/\s/g, '')}`}
-                    className="flex-1 bg-slate-900 text-white py-4 rounded-2xl font-bold text-base lg:text-lg text-center hover:bg-orange-500 transition-colors shadow-lg shadow-slate-200"
+                    className="flex-1 bg-slate-900 text-white py-3 lg:py-4 rounded-xl lg:rounded-2xl font-bold text-sm lg:text-base text-center hover:bg-orange-500 transition-colors shadow-lg shadow-slate-200"
                   >
                     Gọi ngay: {HOTLINE}
                   </a>
                   <Link
                     href="/tai-chinh"
-                    className="flex-1 bg-white border-2 border-slate-200 text-slate-700 py-4 rounded-2xl font-bold text-base lg:text-lg text-center transition-colors hover:bg-slate-50"
+                    className="flex-1 bg-white border-2 border-slate-200 text-slate-700 py-3 lg:py-4 rounded-xl lg:rounded-2xl font-bold text-sm lg:text-base text-center transition-colors hover:bg-slate-50"
                   >
                     Tư vấn tài chính
                   </Link>
                 </div>
 
                 {/* Features */}
-                <div className="bg-white border-2 border-slate-100 rounded-3xl p-6">
-                  <h3 className="text-lg font-bold text-slate-900 mb-4">Cam kết từ {BRAND_NAME}</h3>
-                  <ul className="space-y-3">
+                <div className="bg-white border-2 border-slate-100 rounded-2xl lg:rounded-3xl p-4 lg:p-5">
+                  <h3 className="text-base lg:text-lg font-bold text-slate-900 mb-3">Cam kết từ {BRAND_NAME}</h3>
+                  <ul className="space-y-2">
                     {[
                       'Hàng nhập khẩu chính ngạch 100%, đầy đủ CO/CQ',
                       'Bảo hành lên tới 24 tháng',
                       'Hỗ trợ trọn gói thủ tục đăng ký, đăng kiểm',
                       'Đội ngũ kỹ sư lưu động sẵn sàng hỗ trợ',
                     ].map((feature, idx) => (
-                      <li key={idx} className="flex items-start gap-3">
-                        <div className="w-5 h-5 bg-orange-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                      <li key={idx} className="flex items-start gap-2.5">
+                        <div className="w-4 h-4 lg:w-5 lg:h-5 bg-orange-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                          <svg className="w-2.5 h-2.5 lg:w-3 lg:h-3 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
                         </div>
-                        <span className="text-sm text-slate-700">{feature}</span>
+                        <span className="text-xs lg:text-sm text-slate-700 leading-relaxed">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -363,11 +363,11 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
 
             {/* Related Products Section */}
             {relatedProducts.length > 0 && (
-              <div className="mt-16 lg:mt-24">
-                <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-3">
+              <div className="mt-12 lg:mt-16">
+                <h2 className="text-xl lg:text-2xl font-bold text-slate-900 mb-2">
                   Sản phẩm liên quan
                 </h2>
-                <p className="text-sm text-slate-600 mb-8">
+                <p className="text-xs lg:text-sm text-slate-600 mb-6">
                   Các dòng máy cùng phân khúc, phù hợp để tham khảo thêm.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
