@@ -170,22 +170,6 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
     [product.category, product.id]
   );
 
-  const handleScrollToLeasing = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    const leasingSection = document.getElementById('leasing');
-    if (leasingSection) {
-      // Chỉ áp dụng offset trên mobile (screen width < 1024px)
-      const isMobile = window.innerWidth < 1024;
-      const headerHeight = isMobile ? 64 : 0;
-      const elementPosition = leasingSection.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
-      
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-x-hidden">
@@ -347,13 +331,12 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
                   >
                     Gọi ngay: {HOTLINE}
                   </a>
-                  <a
-                    href="#leasing"
-                    onClick={handleScrollToLeasing}
+                  <Link
+                    href="/tai-chinh"
                     className="flex-1 bg-white border-2 border-slate-200 text-slate-700 py-4 rounded-2xl font-bold text-base lg:text-lg text-center transition-colors hover:bg-slate-50"
                   >
                     Tư vấn tài chính
-                  </a>
+                  </Link>
                 </div>
 
                 {/* Features */}

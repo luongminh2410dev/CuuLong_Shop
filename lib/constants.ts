@@ -13,3 +13,8 @@ export const CATEGORIES = [
   'San gạt',
   'Máy lu'
 ];
+
+// Social media links
+export const ZALO_URL = 'https://zalo.me/0916446769'; // Cập nhật số Zalo thực tế
+export const FACEBOOK_URL = 'https://www.facebook.com/yourpage'; // Cập nhật link Facebook thực tế
+export const MESSENGER_URL = 'https://m.me/yourpage'; // Cập nhật link Messenger thực tế

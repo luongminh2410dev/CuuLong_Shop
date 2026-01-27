@@ -695,7 +695,7 @@ const App: React.FC = () => {
                 <img src={LOGO_URL} alt={BRAND_NAME} className="h-12 w-auto object-contain" />
               </div>
             </div>
-            <p className="max-w-xs leading-relaxed uppercase font-bold text-xs">{BRAND_NAME} - MÁY CÔNG TRÌNH & PHÂN PHỐI</p>
+            <p className="max-w-xs leading-relaxed uppercase font-bold text-xs">{BRAND_NAME} - NHẬP KHẨU & PHÂN PHỐI MÁY CÔNG TRÌNH</p>
             <p className="max-w-xs leading-relaxed">Thiết bị cơ giới chất lượng hàng đầu và giải pháp tài chính linh hoạt cho doanh nghiệp.</p>
             <p className="text-slate-300">Địa chỉ: {ADDRESS}</p>
           </div>

@@ -4,10 +4,10 @@ import { BRAND_NAME, SITE_URL } from '@/lib/constants';
 import { EQUIPMENT_DATA } from '@/constants';
 
 export const metadata: Metadata = {
-  title: `${BRAND_NAME} - Máy Công Trình & Phân Phối Hải Phòng | Bán Máy Xúc Đào, Máy Xúc Lật`,
+  title: `${BRAND_NAME} - NHẬP KHẨU & PHÂN PHỐI MÁY CÔNG TRÌNH Hải Phòng | Bán Máy Xúc Đào, Máy Xúc Lật`,
   description: `${BRAND_NAME} chuyên phân phối máy công trình chất lượng cao tại Hải Phòng: Máy xúc đào, máy xúc lật, máy ủi, máy lu, máy san gạt. Hỗ trợ trả góp, bảo hành 24 tháng. Hotline: 0916 446 769`,
   openGraph: {
-    title: `${BRAND_NAME} - Máy Công Trình & Phân Phối Hải Phòng`,
+    title: `${BRAND_NAME} - NHẬP KHẨU & PHÂN PHỐI MÁY CÔNG TRÌNH Hải Phòng`,
     description: 'Chuyên phân phối máy công trình chất lượng cao tại Hải Phòng: Máy xúc đào, máy xúc lật, máy ủi, máy lu. Hỗ trợ trả góp, bảo hành 24 tháng.',
     url: SITE_URL,
   },

@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { GoogleGenAI } from '@google/genai';
-import { Equipment, ChatMessage } from '@/types';
+import { Equipment } from '@/types';
 import { EQUIPMENT_DATA, LEASING_PARTNERS } from '@/constants';
 import { BRAND_NAME, HOTLINE, ADDRESS, LOGO_URL, CATEGORIES } from '@/lib/constants';
 import { formatPrice, getProductImage, handleImageError } from '@/lib/utils';
@@ -16,18 +15,6 @@ export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState<'none' | 'asc' | 'desc'>('none');
   const [selectedCategory, setSelectedCategory] = useState('Tất cả');
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'assistant', content: `Xin chào! Tôi là trợ lý ảo ${BRAND_NAME}. Bạn đang quan tâm đến dòng máy cơ giới nào hay cần tư vấn về thủ tục cho thuê tài chính?` }
-  ]);
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
 
   const processedEquipment = useMemo(() => {
     let result = [...EQUIPMENT_DATA];
@@ -62,46 +49,6 @@ export default function HomePage() {
     return result;
   }, [searchTerm, sortOrder, selectedCategory]);
 
-  const handleSendMessage = async (customMsg?: string) => {
-    const msgToSend = customMsg || input.trim();
-    if (!msgToSend || isLoading) return;
-
-    if (!customMsg) setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: msgToSend }]);
-    setIsLoading(true);
-
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY });
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: [
-          {
-            parts: [{
-              text: `Bạn là trợ lý ảo chuyên nghiệp cho website ${BRAND_NAME} - chuyên bán máy công trình và liên kết với các công ty cho thuê tài chính. 
-              Địa chỉ: ${ADDRESS}, Hotline: ${HOTLINE}.
-              Dữ liệu máy hiện có: ${JSON.stringify(EQUIPMENT_DATA)}. 
-              Hãy trả lời ngắn gọn, thân thiện. Người dùng nói: ${msgToSend}`
-            }]
-          }
-        ]
-      });
-
-      const aiResponse = response.text || 'Xin lỗi, tôi gặp sự cố khi xử lý yêu cầu.';
-      setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
-    } catch (error) {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Rất tiếc, đã có lỗi xảy ra.' }]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-
-  const openChatWithProduct = (product: Equipment) => {
-    setSelectedEquipment(null);
-    const chatWindow = document.getElementById('chat-window');
-    if (chatWindow) chatWindow.classList.remove('hidden');
-    handleSendMessage(`Tôi muốn tư vấn mua trả góp máy ${product.name}`);
-  };
 
   const CategorySelector = ({ className = "" }: { className?: string }) => (
     <div className={`overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide lg:overflow-visible lg:pb-0 lg:mx-0 lg:px-0 ${className}`}>
@@ -360,57 +307,14 @@ export default function HomePage() {
                 <p className="text-xl lg:text-3xl font-black text-orange-600">{formatPrice(Math.round(selectedEquipment.price * 0.02))} <span className="text-[10px] lg:text-sm text-slate-500 font-normal">/ tháng</span></p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
-                <button onClick={() => openChatWithProduct(selectedEquipment)} className="flex-1 bg-slate-900 text-white py-3 lg:py-4 rounded-xl lg:rounded-2xl font-bold text-sm lg:text-base shadow-lg shadow-slate-200">Nhận báo giá</button>
-                <Link href="/#leasing" onClick={() => setSelectedEquipment(null)} className="flex-1 bg-white border-2 border-slate-200 text-slate-700 py-3 lg:py-4 rounded-xl lg:rounded-2xl font-bold text-sm lg:text-base transition-colors hover:bg-slate-50 text-center">Tài chính</Link>
+                <a href={`tel:${HOTLINE.replace(/\s/g, '')}`} className="flex-1 bg-slate-900 text-white py-3 lg:py-4 rounded-xl lg:rounded-2xl font-bold text-sm lg:text-base shadow-lg shadow-slate-200 text-center hover:bg-orange-500 transition-colors">Gọi ngay</a>
+                <Link href="/tai-chinh" onClick={() => setSelectedEquipment(null)} className="flex-1 bg-white border-2 border-slate-200 text-slate-700 py-3 lg:py-4 rounded-xl lg:rounded-2xl font-bold text-sm lg:text-base transition-colors hover:bg-slate-50 text-center">Tài chính</Link>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* AI Assistant Chat Bubble */}
-      <div className="fixed bottom-4 right-4 lg:bottom-8 lg:right-8 z-[90]">
-        <div className="relative">
-          <button onClick={() => document.getElementById('chat-window')?.classList.toggle('hidden')} className="w-12 h-12 lg:w-16 lg:h-16 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-2xl hover:bg-orange-500 transition-colors active:scale-95">
-            <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>
-          </button>
-          <div id="chat-window" className="hidden absolute bottom-16 right-0 lg:bottom-24 w-[280px] sm:w-[350px] lg:w-[400px] h-[450px] lg:h-[550px] bg-white rounded-[1.5rem] lg:rounded-3xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in slide-in-from-bottom-4 duration-300">
-            <div className="bg-slate-900 p-4 lg:p-6 text-white flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 lg:w-10 lg:h-10 bg-orange-500 rounded-full flex items-center justify-center shadow-lg">
-                  <svg className="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                </div>
-                <h4 className="font-bold text-sm lg:text-base">{BRAND_NAME} AI</h4>
-              </div>
-              <button onClick={() => document.getElementById('chat-window')?.classList.add('hidden')} className="p-1 hover:bg-white/10 rounded-full transition-colors"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
-            </div>
-            <div ref={scrollRef} className="flex-grow p-4 overflow-y-auto space-y-4 bg-slate-50 scroll-smooth">
-              {messages.map((m, i) => (
-                <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] p-3 lg:p-4 rounded-2xl text-xs lg:text-sm ${m.role === 'user' ? 'bg-orange-500 text-white rounded-br-none shadow-md' : 'bg-white text-slate-700 shadow-sm border border-slate-100 rounded-bl-none'}`}>{m.content}</div>
-                </div>
-              ))}
-              {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 flex gap-1">
-                    <div className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce" />
-                    <div className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce [animation-delay:-.15s]" />
-                    <div className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce [animation-delay:-.3s]" />
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="p-3 lg:p-4 border-t bg-white shrink-0">
-              <div className="flex gap-2">
-                <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Hỏi về máy..." className="flex-grow px-4 py-2.5 bg-slate-100 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-orange-500 border border-transparent transition-all" />
-                <button onClick={() => handleSendMessage()} disabled={isLoading} className="w-10 h-10 lg:w-12 lg:h-12 bg-slate-900 text-white rounded-xl flex items-center justify-center hover:bg-orange-500 transition-colors disabled:opacity-50"><svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg></button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <footer className="bg-slate-900 text-slate-400 py-12 lg:py-16 px-4">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 text-sm">
@@ -420,7 +324,7 @@ export default function HomePage() {
                 <img src={LOGO_URL} alt={BRAND_NAME} className="h-12 w-auto object-contain" />
               </div>
             </div>
-            <p className="max-w-xs leading-relaxed uppercase font-bold text-xs">{BRAND_NAME} - MÁY CÔNG TRÌNH & PHÂN PHỐI</p>
+            <p className="max-w-lg leading-relaxed uppercase font-bold text-xs">{BRAND_NAME} - NHẬP KHẨU & PHÂN PHỐI MÁY CÔNG TRÌNH</p>
             <p className="max-w-xs leading-relaxed">Thiết bị cơ giới chất lượng hàng đầu và giải pháp tài chính linh hoạt cho doanh nghiệp.</p>
             <p className="text-slate-300">Địa chỉ: {ADDRESS}</p>
           </div>
@@ -430,6 +334,7 @@ export default function HomePage() {
               <li><Link href="/" className="hover:text-orange-500 transition-colors">Trang chủ</Link></li>
               <li><Link href="/thiet-bi" className="hover:text-orange-500 transition-colors">Thiết bị</Link></li>
               <li><Link href="/#leasing" className="hover:text-orange-500 transition-colors">Giải pháp tài chính</Link></li>
+              <li><Link href="/ve-chung-toi" className="hover:text-orange-500 transition-colors">Về chúng tôi</Link></li>
             </ul>
           </div>
           <div>

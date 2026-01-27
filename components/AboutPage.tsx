@@ -20,7 +20,7 @@ export default function AboutPage() {
               backgroundSize: '40px 40px'
             }} />
           </div>
-          
+
           <div className="max-w-5xl mx-auto px-4 relative z-10">
             <div className="text-center">
               {/* Logo với decorative border */}
@@ -28,8 +28,8 @@ export default function AboutPage() {
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full blur-xl opacity-30 animate-pulse" />
                   <div className="relative bg-white p-6 lg:p-8 rounded-full shadow-2xl border-4 border-orange-100">
-                    <img 
-                      src={LOGO_URL} 
+                    <img
+                      src={LOGO_URL}
                       alt={BRAND_NAME}
                       onError={handleImageError}
                       className="h-20 lg:h-28 w-auto object-contain"
@@ -37,7 +37,7 @@ export default function AboutPage() {
                   </div>
                 </div>
               </div>
-              
+
               {/* Title và Description */}
               <h1 className="text-4xl lg:text-6xl font-black text-slate-900 mb-6">
                 {BRAND_NAME}
@@ -45,7 +45,7 @@ export default function AboutPage() {
               <p className="text-xl lg:text-2xl text-slate-600 max-w-3xl mx-auto mb-8 font-medium">
                 Đại lý phân phối máy công trình chuyên nghiệp tại Hải Phòng
               </p>
-              
+
               {/* Stats hoặc highlights */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mt-12 max-w-3xl mx-auto">
                 {[

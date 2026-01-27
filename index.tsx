@@ -274,40 +274,40 @@ const App: React.FC = () => {
             <div className="flex justify-center pb-4">
               <img src={LOGO_URL} alt={BRAND_NAME} className="h-20 w-auto object-contain" />
             </div>
-            
+
             {/* Menu items */}
             <div className="space-y-2">
-            {[
-              { label: 'Trang chủ', view: 'home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
-              { label: 'Thiết bị', view: 'list', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
-              { label: 'Tài chính', hash: '#leasing', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
-              { label: 'Liên hệ', icon: 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z' }
-            ].map((item, idx) => (
-              <button
-                key={idx}
-                onClick={() => {
-                  if (item.view) {
-                    setCurrentView(item.view as ViewState);
-                    setSelectedCategory('Tất cả');
-                  }
-                  if (item.hash) {
-                    setCurrentView('home');
-                    window.location.hash = item.hash;
-                  }
-                  setIsMobileMenuOpen(false);
-                }}
-                className={`flex items-center gap-5 w-full p-5 rounded-[1.5rem] text-left transition-all duration-300 transform ${isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'} ${(item.view === currentView) ? 'bg-orange-500 text-white shadow-xl shadow-orange-200' : 'bg-white text-slate-800 hover:bg-slate-50 border border-transparent'
-                  }`}
-                style={{ transitionDelay: `${150 + idx * 75}ms` }}
-              >
-                <div className={`p-2 rounded-xl ${item.view === currentView ? 'bg-white/20' : 'bg-slate-100'}`}>
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon} />
-                  </svg>
-                </div>
-                <span className="text-lg font-bold">{item.label}</span>
-              </button>
-            ))}
+              {[
+                { label: 'Trang chủ', view: 'home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
+                { label: 'Thiết bị', view: 'list', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
+                { label: 'Tài chính', hash: '#leasing', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+                { label: 'Liên hệ', icon: 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z' }
+              ].map((item, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    if (item.view) {
+                      setCurrentView(item.view as ViewState);
+                      setSelectedCategory('Tất cả');
+                    }
+                    if (item.hash) {
+                      setCurrentView('home');
+                      window.location.hash = item.hash;
+                    }
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center gap-5 w-full p-5 rounded-[1.5rem] text-left transition-all duration-300 transform ${isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'} ${(item.view === currentView) ? 'bg-orange-500 text-white shadow-xl shadow-orange-200' : 'bg-white text-slate-800 hover:bg-slate-50 border border-transparent'
+                    }`}
+                  style={{ transitionDelay: `${150 + idx * 75}ms` }}
+                >
+                  <div className={`p-2 rounded-xl ${item.view === currentView ? 'bg-white/20' : 'bg-slate-100'}`}>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon} />
+                    </svg>
+                  </div>
+                  <span className="text-lg font-bold">{item.label}</span>
+                </button>
+              ))}
             </div>
           </div>
 
@@ -695,7 +695,7 @@ const App: React.FC = () => {
                 <img src={LOGO_URL} alt={BRAND_NAME} className="h-12 w-auto object-contain" />
               </div>
             </div>
-            <p className="max-w-xs leading-relaxed uppercase font-bold text-xs">{BRAND_NAME} - MÁY CÔNG TRÌNH & PHÂN PHỐI</p>
+            <p className="max-w-xs leading-relaxed uppercase font-bold text-xs">{BRAND_NAME} - NHẬP KHẨU & PHÂN PHỐI MÁY CÔNG TRÌNH</p>
             <p className="max-w-xs leading-relaxed">Thiết bị cơ giới chất lượng hàng đầu và giải pháp tài chính linh hoạt cho doanh nghiệp.</p>
             <p className="text-slate-300">Địa chỉ: {ADDRESS}</p>
           </div>
