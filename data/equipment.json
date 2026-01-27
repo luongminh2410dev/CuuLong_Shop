@@ -5,7 +5,12 @@
     "category": "Máy Xúc Đào",
     "brand": "Komatsu",
     "price": 2450000000,
-    "image": "https://images.unsplash.com/photo-1586191582151-f73770db47a6?auto=format&fit=crop&q=80&w=800",
+    "image": "/images/equipment/komatsu-pc200-8m0.png",
+    "images": [
+      "/images/equipment/komatsu-pc200-8m0.png",
+      "/images/equipment/komatsu-pc200-8m0-2.png",
+      "/images/equipment/komatsu-pc200-8m0-3.png"
+    ],
     "specs": {
       "weight": "20,000 kg",
       "power": "110 kW",
@@ -18,7 +23,10 @@
     "category": "Máy Ủi",
     "brand": "Caterpillar",
     "price": 3200000000,
-    "image": "https://images.unsplash.com/photo-1621245033771-33827258359b?auto=format&fit=crop&q=80&w=800",
+    "image": "/images/equipment/caterpillar-d6r.png",
+    "images": [
+      "/images/equipment/caterpillar-d6r.png"
+    ],
     "specs": {
       "weight": "18,500 kg",
       "power": "135 kW",
@@ -31,7 +39,11 @@
     "category": "Máy Lu",
     "brand": "Hamm",
     "price": 1850000000,
-    "image": "https://images.unsplash.com/photo-1531835721793-79361c775736?auto=format&fit=crop&q=80&w=800",
+    "image": "/images/equipment/hamm-3411.png",
+    "images": [
+      "/images/equipment/hamm-3411.png",
+      "/images/equipment/hamm-3411-2.png"
+    ],
     "specs": {
       "weight": "11,300 kg",
       "power": "100 kW",
@@ -44,7 +56,12 @@
     "category": "Máy Xúc Lật",
     "brand": "Liugong",
     "price": 1250000000,
-    "image": "https://images.unsplash.com/photo-1578319439584-104c94d37305?auto=format&fit=crop&q=80&w=800",
+    "image": "/images/equipment/liugong-clg856h.png",
+    "images": [
+      "/images/equipment/liugong-clg856h.png",
+      "/images/equipment/liugong-clg856h-2.png",
+      "/images/equipment/liugong-clg856h-3.png"
+    ],
     "specs": {
       "weight": "17,100 kg",
       "power": "162 kW",
@@ -57,7 +74,10 @@
     "category": "Máy Xúc Lật",
     "brand": "Liugong",
     "price": 950000000,
-    "image": "https://images.unsplash.com/photo-1605141011833-28989f67a6d8?auto=format&fit=crop&q=80&w=800",
+    "image": "/images/equipment/liugong-clg835h.png",
+    "images": [
+      "/images/equipment/liugong-clg835h.png"
+    ],
     "specs": {
       "weight": "10,300 kg",
       "power": "92 kW",
@@ -70,7 +90,11 @@
     "category": "Máy Xúc Lật",
     "brand": "Liugong",
     "price": 450000000,
-    "image": "https://images.unsplash.com/photo-1541625602330-2277a4c4b28d?auto=format&fit=crop&q=80&w=800",
+    "image": "/images/equipment/liugong-clg816c.png",
+    "images": [
+      "/images/equipment/liugong-clg816c.png",
+      "/images/equipment/liugong-clg816c-2.png"
+    ],
     "specs": {
       "weight": "5,470 kg",
       "power": "55 kW",
@@ -83,7 +107,11 @@
     "category": "Máy Xúc Lật",
     "brand": "XCMG",
     "price": 520000000,
-    "image": "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800",
+    "image": "/images/equipment/xcmg-xc740k.png",
+    "images": [
+      "/images/equipment/xcmg-xc740k.png",
+      "/images/equipment/xcmg-xc740k-2.png"
+    ],
     "specs": {
       "weight": "3,500 kg",
       "power": "37 kW",
@@ -96,7 +124,12 @@
     "category": "Xe Cẩu",
     "brand": "Sany",
     "price": 4500000000,
-    "image": "https://images.unsplash.com/photo-1541625602330-2277a4c4b28d?auto=format&fit=crop&q=80&w=800",
+    "image": "/images/equipment/sany-scc550a.png",
+    "images": [
+      "/images/equipment/sany-scc550a.png",
+      "/images/equipment/sany-scc550a-2.png",
+      "/images/equipment/sany-scc550a-3.png"
+    ],
     "specs": {
       "weight": "55,000 kg",
       "power": "154 kW",
@@ -109,7 +142,11 @@
     "category": "Máy Xúc Đào",
     "brand": "Hitachi",
     "price": 2680000000,
-    "image": "https://images.unsplash.com/photo-1579762560114-6330058b868f?auto=format&fit=crop&q=80&w=800",
+    "image": "/images/equipment/hitachi-zx200-5g.png",
+    "images": [
+      "/images/equipment/hitachi-zx200-5g.png",
+      "/images/equipment/hitachi-zx200-5g-2.png"
+    ],
     "specs": {
       "weight": "20,400 kg",
       "power": "125 kW",
@@ -122,7 +159,12 @@
     "category": "Máy Xúc Lật",
     "brand": "Volvo",
     "price": 3950000000,
-    "image": "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800",
+    "image": "/images/equipment/volvo-l120h.png",
+    "images": [
+      "/images/equipment/volvo-l120h.png",
+      "/images/equipment/volvo-l120h-2.png",
+      "/images/equipment/volvo-l120h-3.png"
+    ],
     "specs": {
       "weight": "21,000 kg",
       "power": "203 kW",
@@ -135,7 +177,11 @@
     "category": "Máy San Gạt",
     "brand": "XCMG",
     "price": 1550000000,
-    "image": "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800",
+    "image": "/images/equipment/xcmg-gr135.png",
+    "images": [
+      "/images/equipment/xcmg-gr135.png",
+      "/images/equipment/xcmg-gr135-2.png"
+    ],
     "specs": {
       "weight": "11,200 kg",
       "power": "100 kW",
@@ -148,7 +194,12 @@
     "category": "Máy Xúc Đào",
     "brand": "Doosan",
     "price": 2150000000,
-    "image": "https://images.unsplash.com/photo-1547038577-da80abbc4f19?auto=format&fit=crop&q=80&w=800",
+    "image": "/images/equipment/doosan-dx225lca.png",
+    "images": [
+      "/images/equipment/doosan-dx225lca.png",
+      "/images/equipment/doosan-dx225lca-2.png",
+      "/images/equipment/doosan-dx225lca-3.png"
+    ],
     "specs": {
       "weight": "22,500 kg",
       "power": "116 kW",

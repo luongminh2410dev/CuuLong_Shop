@@ -50,8 +50,19 @@ export default function EquipmentPage() {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
   };
 
+  const getProductImage = (item: Equipment): string => {
+    // Lấy ảnh đầu tiên từ mảng images hoặc fallback về image (backward compatible)
+    if (item.images && item.images.length > 0) {
+      return item.images[0];
+    }
+    return item.image || '/images/fallback.png';
+  };
+
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    e.currentTarget.src = 'https://images.unsplash.com/photo-1541625602330-2277a4c4b28d?auto=format&fit=crop&q=80&w=800';
+    // Tránh vòng lặp vô hạn - chỉ set fallback một lần
+    if (!e.currentTarget.src.includes('/images/fallback.png')) {
+      e.currentTarget.src = '/images/fallback.png';
+    }
   };
 
   const CategorySelector = () => (
@@ -74,13 +85,13 @@ export default function EquipmentPage() {
   );
 
   const EquipmentCard = ({ item }: { item: Equipment }) => (
-    <div
-      onClick={() => setSelectedEquipment(item)}
+    <Link
+      href={`/thiet-bi/${item.id}`}
       className="group bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col cursor-pointer"
     >
       <div className="relative h-48 overflow-hidden">
         <img
-          src={item.image}
+          src={getProductImage(item)}
           alt={item.name}
           onError={handleImageError}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
@@ -103,12 +114,12 @@ export default function EquipmentPage() {
         </div>
         <div className="mt-auto">
           <div className="text-orange-600 font-bold text-lg lg:text-xl mb-4">{formatPrice(item.price)}</div>
-          <button className="w-full bg-slate-900 text-white py-3 rounded-2xl font-bold text-sm hover:bg-orange-500 transition-colors">
+          <div className="w-full bg-slate-900 text-white py-3 rounded-2xl font-bold text-sm hover:bg-orange-500 transition-colors text-center">
             Xem chi tiết
-          </button>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 
   return (
@@ -205,7 +216,7 @@ export default function EquipmentPage() {
               </svg>
             </button>
             <div className="h-48 sm:h-64 md:h-auto md:w-1/2 bg-slate-100 shrink-0">
-              <img src={selectedEquipment.image} alt={selectedEquipment.name} onError={handleImageError} className="w-full h-full object-cover" />
+              <img src={getProductImage(selectedEquipment)} alt={selectedEquipment.name} onError={handleImageError} className="w-full h-full object-cover" />
             </div>
             <div className="md:w-1/2 p-6 lg:p-12 overflow-y-auto">
               <span className="inline-block px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3 lg:mb-4">{selectedEquipment.category}</span>

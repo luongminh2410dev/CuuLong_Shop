@@ -25,8 +25,10 @@ export interface Equipment {
   brand: string;
   /** Giá bán (đơn vị: VND) */
   price: number;
-  /** URL hình ảnh sản phẩm */
-  image: string;
+  /** URL hình ảnh sản phẩm chính (để backward compatibility) */
+  image?: string;
+  /** Mảng URL các hình ảnh sản phẩm */
+  images: string[];
   /** Thông số kỹ thuật chi tiết */
   specs: EquipmentSpecs;
 }

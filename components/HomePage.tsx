@@ -98,8 +98,19 @@ export default function HomePage() {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
   };
 
+  const getProductImage = (item: Equipment): string => {
+    // Lấy ảnh đầu tiên từ mảng images hoặc fallback về image (backward compatible)
+    if (item.images && item.images.length > 0) {
+      return item.images[0];
+    }
+    return item.image || '/images/fallback.png';
+  };
+
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    e.currentTarget.src = 'https://images.unsplash.com/photo-1541625602330-2277a4c4b28d?auto=format&fit=crop&q=80&w=800';
+    // Tránh vòng lặp vô hạn - chỉ set fallback một lần
+    if (!e.currentTarget.src.includes('/images/fallback.png')) {
+      e.currentTarget.src = '/images/fallback.png';
+    }
   };
 
   const openChatWithProduct = (product: Equipment) => {
@@ -129,13 +140,13 @@ export default function HomePage() {
   );
 
   const EquipmentCard = ({ item }: { item: Equipment }) => (
-    <div
-      onClick={() => setSelectedEquipment(item)}
+    <Link
+      href={`/thiet-bi/${item.id}`}
       className="group bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col cursor-pointer"
     >
       <div className="relative h-48 overflow-hidden">
         <img
-          src={item.image}
+          src={getProductImage(item)}
           alt={item.name}
           onError={handleImageError}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
@@ -158,12 +169,12 @@ export default function HomePage() {
         </div>
         <div className="mt-auto">
           <div className="text-orange-600 font-bold text-lg lg:text-xl mb-4">{formatPrice(item.price)}</div>
-          <button className="w-full bg-slate-900 text-white py-3 rounded-2xl font-bold text-sm hover:bg-orange-500 transition-colors">
+          <div className="w-full bg-slate-900 text-white py-3 rounded-2xl font-bold text-sm hover:bg-orange-500 transition-colors text-center">
             Xem chi tiết
-          </button>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 
   return (
@@ -197,7 +208,7 @@ export default function HomePage() {
             <div className="flex-1 w-full max-w-lg lg:max-none relative mt-4 lg:mt-0">
               <div className="bg-white p-2 lg:p-4 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-2xl rotate-1 lg:rotate-2 hover:rotate-0 transition-transform duration-500">
                 <img
-                  src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=1000"
+                  src="/images/hero/hero.jpg"
                   alt="Máy công trình Cửu Long - Phân phối máy xúc đào, máy xúc lật, máy ủi chất lượng cao tại Hải Phòng"
                   onError={handleImageError}
                   className="rounded-[1.2rem] lg:rounded-[2rem] w-full h-[250px] lg:h-[400px] object-cover"
@@ -337,7 +348,7 @@ export default function HomePage() {
               </svg>
             </button>
             <div className="h-48 sm:h-64 md:h-auto md:w-1/2 bg-slate-100 shrink-0">
-              <img src={selectedEquipment.image} alt={selectedEquipment.name} onError={handleImageError} className="w-full h-full object-cover" />
+              <img src={getProductImage(selectedEquipment)} alt={selectedEquipment.name} onError={handleImageError} className="w-full h-full object-cover" />
             </div>
             <div className="md:w-1/2 p-6 lg:p-12 overflow-y-auto">
               <span className="inline-block px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3 lg:mb-4">{selectedEquipment.category}</span>
