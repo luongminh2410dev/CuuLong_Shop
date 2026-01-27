@@ -1,0 +1,158 @@
+[
+  {
+    "id": "1",
+    "name": "Máy Xúc Đào Komatsu PC200-8M0",
+    "category": "Máy Xúc Đào",
+    "brand": "Komatsu",
+    "price": 2450000000,
+    "image": "https://images.unsplash.com/photo-1586191582151-f73770db47a6?auto=format&fit=crop&q=80&w=800",
+    "specs": {
+      "weight": "20,000 kg",
+      "power": "110 kW",
+      "capacity": "0.8 m3"
+    }
+  },
+  {
+    "id": "2",
+    "name": "Máy Ủi Caterpillar D6R",
+    "category": "Máy Ủi",
+    "brand": "Caterpillar",
+    "price": 3200000000,
+    "image": "https://images.unsplash.com/photo-1621245033771-33827258359b?auto=format&fit=crop&q=80&w=800",
+    "specs": {
+      "weight": "18,500 kg",
+      "power": "135 kW",
+      "capacity": "4.5 m3"
+    }
+  },
+  {
+    "id": "3",
+    "name": "Máy Lu Rung Hamm 3411",
+    "category": "Máy Lu",
+    "brand": "Hamm",
+    "price": 1850000000,
+    "image": "https://images.unsplash.com/photo-1531835721793-79361c775736?auto=format&fit=crop&q=80&w=800",
+    "specs": {
+      "weight": "11,300 kg",
+      "power": "100 kW",
+      "capacity": "2.14 m"
+    }
+  },
+  {
+    "id": "4",
+    "name": "Máy Xúc Lật Liugong CLG856H",
+    "category": "Máy Xúc Lật",
+    "brand": "Liugong",
+    "price": 1250000000,
+    "image": "https://images.unsplash.com/photo-1578319439584-104c94d37305?auto=format&fit=crop&q=80&w=800",
+    "specs": {
+      "weight": "17,100 kg",
+      "power": "162 kW",
+      "capacity": "3.0 m3"
+    }
+  },
+  {
+    "id": "13",
+    "name": "Máy Xúc Lật Liugong CLG835H",
+    "category": "Máy Xúc Lật",
+    "brand": "Liugong",
+    "price": 950000000,
+    "image": "https://images.unsplash.com/photo-1605141011833-28989f67a6d8?auto=format&fit=crop&q=80&w=800",
+    "specs": {
+      "weight": "10,300 kg",
+      "power": "92 kW",
+      "capacity": "1.8 m3"
+    }
+  },
+  {
+    "id": "14",
+    "name": "Máy Xúc Lật Mini Liugong CLG816C",
+    "category": "Máy Xúc Lật",
+    "brand": "Liugong",
+    "price": 450000000,
+    "image": "https://images.unsplash.com/photo-1541625602330-2277a4c4b28d?auto=format&fit=crop&q=80&w=800",
+    "specs": {
+      "weight": "5,470 kg",
+      "power": "55 kW",
+      "capacity": "0.8 m3"
+    }
+  },
+  {
+    "id": "15",
+    "name": "Máy Xúc Lật Mini XC740K",
+    "category": "Máy Xúc Lật",
+    "brand": "XCMG",
+    "price": 520000000,
+    "image": "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800",
+    "specs": {
+      "weight": "3,500 kg",
+      "power": "37 kW",
+      "capacity": "0.45 m3"
+    }
+  },
+  {
+    "id": "5",
+    "name": "Xe Cẩu Bánh Xích Sany SCC550A",
+    "category": "Xe Cẩu",
+    "brand": "Sany",
+    "price": 4500000000,
+    "image": "https://images.unsplash.com/photo-1541625602330-2277a4c4b28d?auto=format&fit=crop&q=80&w=800",
+    "specs": {
+      "weight": "55,000 kg",
+      "power": "154 kW",
+      "capacity": "55 Tấn"
+    }
+  },
+  {
+    "id": "6",
+    "name": "Máy Xúc Đào Hitachi ZX200-5G",
+    "category": "Máy Xúc Đào",
+    "brand": "Hitachi",
+    "price": 2680000000,
+    "image": "https://images.unsplash.com/photo-1579762560114-6330058b868f?auto=format&fit=crop&q=80&w=800",
+    "specs": {
+      "weight": "20,400 kg",
+      "power": "125 kW",
+      "capacity": "0.9 m3"
+    }
+  },
+  {
+    "id": "7",
+    "name": "Máy Xúc Lật Volvo L120H",
+    "category": "Máy Xúc Lật",
+    "brand": "Volvo",
+    "price": 3950000000,
+    "image": "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800",
+    "specs": {
+      "weight": "21,000 kg",
+      "power": "203 kW",
+      "capacity": "3.5 m3"
+    }
+  },
+  {
+    "id": "8",
+    "name": "Máy San Gạt XCMG GR135",
+    "category": "Máy San Gạt",
+    "brand": "XCMG",
+    "price": 1550000000,
+    "image": "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800",
+    "specs": {
+      "weight": "11,200 kg",
+      "power": "100 kW",
+      "capacity": "3.7 m"
+    }
+  },
+  {
+    "id": "9",
+    "name": "Máy Xúc Đào Doosan DX225LCA",
+    "category": "Máy Xúc Đào",
+    "brand": "Doosan",
+    "price": 2150000000,
+    "image": "https://images.unsplash.com/photo-1547038577-da80abbc4f19?auto=format&fit=crop&q=80&w=800",
+    "specs": {
+      "weight": "22,500 kg",
+      "power": "116 kW",
+      "capacity": "1.05 m3"
+    }
+  }
+]
