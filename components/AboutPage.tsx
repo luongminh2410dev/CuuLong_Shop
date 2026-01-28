@@ -1,7 +1,7 @@
 'use client';
 
 import Navigation from './Navigation';
-import { BRAND_NAME, HOTLINE, ADDRESS, LOGO_URL } from '@/lib/constants';
+import { BRAND_NAME, HOTLINE, ADDRESS, LOGO_URL, PHONE_NUMBERS } from '@/lib/constants';
 import { handleImageError } from '@/lib/utils';
 import Link from 'next/link';
 
@@ -189,11 +189,19 @@ export default function AboutPage() {
                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 005.47 5.47l.773-1.548a1 1 0 011.06-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                       </svg>
                     </div>
-                    <div>
-                      <p className="font-semibold mb-1">Hotline</p>
-                      <a href={`tel:${HOTLINE.replace(/\s/g, '')}`} className="text-orange-400 hover:text-orange-300 font-bold text-lg">
-                        {HOTLINE}
-                      </a>
+                    <div className="flex-1">
+                      <p className="font-semibold mb-2">Hotline</p>
+                      <div className="space-y-2">
+                        {PHONE_NUMBERS.map((phone, index) => (
+                          <a
+                            key={index}
+                            href={`tel:${phone}`}
+                            className="block text-orange-400 hover:text-orange-300 font-bold text-lg transition-colors"
+                          >
+                            {phone.replace(/(\d{4})(\d{3})(\d{4})/, '$1 $2 $3')}
+                          </a>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
