@@ -67,7 +67,7 @@ export default function Navigation() {
               </svg>
             </button>
           </div>
-          <div className="flex-grow flex flex-col justify-center px-8 space-y-6">
+          <div className="flex-grow flex flex-col justify-start pt-8 px-8 space-y-6">
             <div className="flex justify-center pb-4">
               <img src={LOGO_URL} alt={BRAND_NAME} className="h-20 w-auto object-contain" />
             </div>
@@ -104,17 +104,6 @@ export default function Navigation() {
                 );
               })}
             </div>
-          </div>
-          <div className="p-8 border-t border-slate-50">
-            <a
-              href={`tel:${HOTLINE.replace(/\s/g, '')}`}
-              className="flex items-center justify-center gap-3 w-full bg-slate-900 text-white py-5 rounded-[1.5rem] font-bold text-lg shadow-xl shadow-slate-200 active:scale-95 transition-transform"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 005.47 5.47l.773-1.548a1 1 0 011.06-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 12.18 2 5V3z" />
-              </svg>
-              {HOTLINE}
-            </a>
           </div>
         </div>
       </div>

@@ -117,6 +117,7 @@ export default function HomePage() {
         {/* Hero Section */}
         <section className="relative py-12 lg:py-20 px-4 overflow-hidden animate-in fade-in duration-500">
           <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[300px] lg:w-[500px] h-[300px] lg:h-[500px] bg-orange-100/50 rounded-full blur-3xl -z-10" />
+          <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[250px] lg:w-[400px] h-[250px] lg:h-[400px] bg-blue-100/30 rounded-full blur-3xl -z-10" />
           <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
             <div className="flex-1 text-center lg:text-left">
               <h1 className="text-2xl md:text-4xl lg:text-5xl lg:leading-[1.15] font-bold text-slate-900 leading-snug mb-4 lg:mb-6">
@@ -125,7 +126,7 @@ export default function HomePage() {
               <p className="text-base lg:text-xl text-slate-600 mb-6 lg:mb-8 max-w-2xl mx-auto lg:mx-0">
                 Phân phối thiết bị cơ giới chất lượng cao tại Hải Phòng cùng giải pháp tài chính linh hoạt nhất.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6 lg:mb-8">
                 <Link
                   href="/thiet-bi"
                   className="bg-orange-500 text-white px-6 py-3.5 lg:px-8 lg:py-4 rounded-2xl font-bold text-base lg:text-lg hover:bg-orange-600 transition-all shadow-xl shadow-orange-200 text-center"
@@ -136,15 +137,54 @@ export default function HomePage() {
                   Liên hệ ngay
                 </a>
               </div>
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0">
+                <div className="text-center lg:text-left">
+                  <div className="text-2xl lg:text-3xl font-black text-orange-500 mb-1">50+</div>
+                  <div className="text-xs lg:text-sm text-slate-600">Sản phẩm</div>
+                </div>
+                <div className="text-center lg:text-left">
+                  <div className="text-2xl lg:text-3xl font-black text-orange-500 mb-1">24</div>
+                  <div className="text-xs lg:text-sm text-slate-600">Tháng bảo hành</div>
+                </div>
+                <div className="text-center lg:text-left">
+                  <div className="text-2xl lg:text-3xl font-black text-orange-500 mb-1">10+</div>
+                  <div className="text-xs lg:text-sm text-slate-600">Năm kinh nghiệm</div>
+                </div>
+              </div>
             </div>
             <div className="flex-1 w-full max-w-lg lg:max-none relative mt-4 lg:mt-0">
-              <div className="bg-white p-2 lg:p-4 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-2xl rotate-1 lg:rotate-2 hover:rotate-0 transition-transform duration-500">
-                <img
-                  src="/images/hero/hero.jpg"
-                  alt="Máy công trình Cửu Long - Phân phối máy xúc đào, máy xúc lật, máy ủi chất lượng cao tại Hải Phòng"
-                  onError={handleImageError}
-                  className="rounded-[1.2rem] lg:rounded-[2rem] w-full h-[250px] lg:h-[400px] object-cover"
-                />
+              <div className="relative">
+                <div className="bg-white p-2 lg:p-4 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-2xl rotate-1 lg:rotate-2 hover:rotate-0 transition-transform duration-500 relative z-10">
+                  <img
+                    src="/images/hero/hero.jpg"
+                    alt="Máy công trình Cửu Long - Phân phối máy xúc đào, máy xúc lật, máy ủi chất lượng cao tại Hải Phòng"
+                    onError={handleImageError}
+                    className="rounded-[1.2rem] lg:rounded-[2rem] w-full h-[250px] lg:h-[400px] object-cover"
+                  />
+                </div>
+                {/* Floating images */}
+                {EQUIPMENT_DATA.slice(0, 3).map((item, index) => (
+                  <div
+                    key={item.id}
+                    className="absolute hidden lg:block"
+                    style={{
+                      top: index === 0 ? '-20px' : index === 1 ? '20px' : '60px',
+                      right: index === 0 ? '-40px' : index === 1 ? '-60px' : '-30px',
+                      zIndex: index === 0 ? 5 : index === 1 ? 3 : 4,
+                      transform: `rotate(${index === 0 ? '-5deg' : index === 1 ? '8deg' : '-3deg'})`,
+                    }}
+                  >
+                    <div className="bg-white p-2 rounded-xl shadow-lg border-2 border-white hover:scale-110 transition-transform duration-300">
+                      <img
+                        src={getProductImage(item)}
+                        alt={item.name}
+                        onError={handleImageError}
+                        className="w-24 h-24 object-cover rounded-lg"
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -155,7 +195,7 @@ export default function HomePage() {
           <div className="max-w-7xl mx-auto px-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               <div className="bg-white p-6 lg:p-8 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-sm border border-slate-100 group hover:shadow-xl hover:border-orange-200 transition-all duration-300">
-                <div className="w-12 h-12 lg:w-16 lg:h-16 bg-orange-100 rounded-xl lg:rounded-2xl flex items-center justify-center mb-6 group-hover:bg-orange-500 transition-colors">
+                <div className="w-12 h-12 lg:w-16 lg:h-16 bg-orange-100 rounded-xl lg:rounded-2xl flex items-center justify-center mb-4 group-hover:bg-orange-500 transition-colors">
                   <svg className="w-6 h-6 lg:w-8 lg:h-8 text-orange-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                   </svg>
@@ -167,7 +207,7 @@ export default function HomePage() {
               </div>
 
               <div className="bg-white p-6 lg:p-8 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-sm border border-slate-100 group hover:shadow-xl hover:border-orange-200 transition-all duration-300">
-                <div className="w-12 h-12 lg:w-16 lg:h-16 bg-blue-100 rounded-xl lg:rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors">
+                <div className="w-12 h-12 lg:w-16 lg:h-16 bg-blue-100 rounded-xl lg:rounded-2xl flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors">
                   <svg className="w-6 h-6 lg:w-8 lg:h-8 text-blue-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -180,7 +220,7 @@ export default function HomePage() {
               </div>
 
               <div className="bg-white p-6 lg:p-8 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-sm border border-slate-100 group hover:shadow-xl hover:border-orange-200 transition-all duration-300">
-                <div className="w-12 h-12 lg:w-16 lg:h-16 bg-green-100 rounded-xl lg:rounded-2xl flex items-center justify-center mb-6 group-hover:bg-green-600 transition-colors">
+                <div className="w-12 h-12 lg:w-16 lg:h-16 bg-green-100 rounded-xl lg:rounded-2xl flex items-center justify-center mb-4 group-hover:bg-green-600 transition-colors">
                   <svg className="w-6 h-6 lg:w-8 lg:h-8 text-green-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
                   </svg>
@@ -195,8 +235,12 @@ export default function HomePage() {
         </section>
 
         {/* Featured Equipment Grid */}
-        <section id="equipment" className="py-12 lg:py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4">
+        <section id="equipment" className="py-12 lg:py-24 bg-white relative overflow-hidden">
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute top-20 right-20 w-96 h-96 bg-orange-500 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-20 left-20 w-80 h-80 bg-blue-500 rounded-full blur-3xl"></div>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 relative z-10">
             <div className="mb-8 lg:mb-12">
               <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
                 <div>
@@ -225,8 +269,12 @@ export default function HomePage() {
         </section>
 
         {/* Leasing Partners */}
-        <section id="leasing" className="py-12 lg:py-24 bg-slate-50 border-y border-slate-200">
-          <div className="max-w-7xl mx-auto px-4 text-center mb-12 lg:mb-16">
+        <section id="leasing" className="py-12 lg:py-24 bg-gradient-to-b from-slate-50 to-white border-y border-slate-200 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute top-10 left-10 w-64 h-64 bg-orange-500 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 text-center mb-12 lg:mb-16 relative z-10">
             <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-4">Giải pháp tài chính</h2>
             <p className="text-sm lg:text-base text-slate-600 max-w-2xl mx-auto mb-6">Chúng tôi hợp tác với các định chế hàng đầu mang đến phương án tối ưu cho quý khách tại Hải Phòng và toàn quốc.</p>
             <Link
