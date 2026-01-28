@@ -7,7 +7,9 @@ import { Equipment } from '@/types';
 import { EQUIPMENT_DATA, LEASING_PARTNERS } from '@/constants';
 import { BRAND_NAME, HOTLINE, ADDRESS, LOGO_URL, CATEGORIES } from '@/lib/constants';
 import { formatPrice, getProductImage, handleImageError } from '@/lib/utils';
+import { ZALO_URL, FACEBOOK_URL, MESSENGER_URL, PHONE_NUMBERS } from '@/lib/constants';
 import Navigation from './Navigation';
+import Image from 'next/image';
 
 export default function HomePage() {
   const router = useRouter();
@@ -86,7 +88,7 @@ export default function HomePage() {
         </div>
       </div>
       <div className="p-5 lg:p-6 flex-grow flex flex-col">
-        <h3 className="text-base lg:text-lg font-bold text-slate-900 mb-2 leading-snug h-12 overflow-hidden line-clamp-2">{item.name}</h3>
+        <h3 className="text-base lg:text-lg font-bold text-slate-900 mb-2 leading-tight min-h-[3rem] line-clamp-2">{item.name}</h3>
         <div className="grid grid-cols-2 gap-2 mb-4 text-[10px] lg:text-xs text-slate-500">
           <div className="bg-slate-50 p-2 rounded-xl text-center">
             <span className="block font-semibold text-slate-800">{item.specs.weight}</span>
@@ -339,10 +341,77 @@ export default function HomePage() {
           </div>
           <div>
             <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-xs">Liên hệ hỗ trợ</h4>
-            <ul className="space-y-2">
+            <ul className="space-y-2 mb-4">
               <li><a href="#" className="hover:text-orange-500 transition-colors text-slate-300">Chính sách bảo hành</a></li>
-              <li><a href={`tel:${HOTLINE.replace(/\s/g, '')}`} className="hover:text-orange-500 transition-colors font-bold text-white uppercase tracking-wider">Hotline: {HOTLINE}</a></li>
             </ul>
+            <ul className="space-y-2 mb-4">
+              {PHONE_NUMBERS.map((phone, index) => {
+                const formattedPhone = phone.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3');
+                return (
+                  <li key={index}>
+                    <a 
+                      href={`tel:${phone}`} 
+                      className="flex items-center gap-2 text-slate-300 hover:text-orange-500 transition-colors text-sm group"
+                    >
+                      <svg className="w-4 h-4 text-orange-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                      <span>{formattedPhone}</span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+            <div className="mt-4">
+              <h5 className="text-white font-bold mb-3 uppercase tracking-wider text-xs">Mạng xã hội</h5>
+              <div className="flex gap-3">
+                <a
+                  href={ZALO_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-slate-800 hover:bg-[#0068FF] rounded-lg flex items-center justify-center transition-colors"
+                  aria-label="Zalo"
+                >
+                  <Image
+                    src="/images/zalo.png"
+                    alt="Zalo"
+                    width={20}
+                    height={20}
+                    className="w-5 h-5 object-contain"
+                  />
+                </a>
+                <a
+                  href={MESSENGER_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-slate-800 hover:bg-[#0084FF] rounded-lg flex items-center justify-center transition-colors"
+                  aria-label="Messenger"
+                >
+                  <Image
+                    src="/images/messenger.png"
+                    alt="Messenger"
+                    width={20}
+                    height={20}
+                    className="w-5 h-5 object-contain"
+                  />
+                </a>
+                <a
+                  href={FACEBOOK_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-slate-800 hover:bg-[#1877F2] rounded-lg flex items-center justify-center transition-colors"
+                  aria-label="Facebook"
+                >
+                  <Image
+                    src="/images/facebook.png"
+                    alt="Facebook"
+                    width={20}
+                    height={20}
+                    className="w-5 h-5 object-contain"
+                  />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
         <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-800 text-center text-xs opacity-50 uppercase tracking-[0.2em]">

@@ -389,7 +389,7 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
                         </div>
                       </div>
                       <div className="p-4 flex flex-col flex-grow">
-                        <h3 className="text-sm font-bold text-slate-900 mb-2 line-clamp-2">
+                        <h3 className="text-sm font-bold text-slate-900 mb-2 leading-tight min-h-[2.5rem] line-clamp-2">
                           {item.name}
                         </h3>
                         <div className="grid grid-cols-2 gap-2 mb-3 text-[10px] text-slate-500">

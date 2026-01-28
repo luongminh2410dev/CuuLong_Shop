@@ -84,7 +84,7 @@ export default function EquipmentPage() {
         </div>
       </div>
       <div className="p-5 lg:p-6 flex-grow flex flex-col">
-        <h3 className="text-base lg:text-lg font-bold text-slate-900 mb-2 leading-snug h-12 overflow-hidden line-clamp-2">{item.name}</h3>
+        <h3 className="text-base lg:text-lg font-bold text-slate-900 mb-2 leading-tight min-h-[3rem] line-clamp-2">{item.name}</h3>
         <div className="grid grid-cols-2 gap-2 mb-4 text-[10px] lg:text-xs text-slate-500">
           <div className="bg-slate-50 p-2 rounded-xl text-center">
             <span className="block font-semibold text-slate-800">{item.specs.weight}</span>
