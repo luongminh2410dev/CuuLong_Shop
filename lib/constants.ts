@@ -18,3 +18,10 @@ export const CATEGORIES = [
 export const ZALO_URL = 'https://zalo.me/0916446769'; // Cập nhật số Zalo thực tế
 export const FACEBOOK_URL = 'https://www.facebook.com/yourpage'; // Cập nhật link Facebook thực tế
 export const MESSENGER_URL = 'https://m.me/yourpage'; // Cập nhật link Messenger thực tế
+
+// Phone numbers
+export const PHONE_NUMBERS = [
+  '0916446769',
+  '0979777629',
+  '0938794444',
+];
