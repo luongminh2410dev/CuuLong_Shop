@@ -434,15 +434,14 @@ export default function ProductDetailPage({ product }: ProductDetailPageProps) {
           <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {LEASING_PARTNERS.map((partner) => (
               <div key={partner.name} className="bg-white p-6 lg:p-8 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-sm border border-slate-200 hover:border-orange-500 transition-colors group flex flex-col">
-                <div className="h-16 lg:h-20 flex flex-col items-center justify-center mb-6 lg:mb-8 gap-2">
-                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-slate-50 rounded-xl lg:rounded-2xl flex items-center justify-center group-hover:bg-orange-50 transition-colors overflow-hidden p-2">
+                <div className="h-20 lg:h-24 flex items-center justify-center mb-6 lg:mb-8">
+                  <div className="w-24 h-24 lg:w-28 lg:h-28 bg-slate-50 rounded-2xl lg:rounded-3xl flex items-center justify-center group-hover:bg-orange-50 transition-colors overflow-hidden p-4 shadow-sm group-hover:shadow-md">
                     <img
                       src={partner.logo}
                       alt={partner.name}
-                      className="w-full h-full object-contain opacity-70 group-hover:opacity-100 transition-opacity"
+                      className="w-full h-full object-contain opacity-80 group-hover:opacity-100 transition-opacity"
                     />
                   </div>
-                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{partner.name.split(' ')[0]}</div>
                 </div>
                 <h3 className="text-lg lg:text-xl font-bold text-slate-900 mb-3 lg:mb-4">{partner.name}</h3>
                 <p className="text-slate-600 mb-6 text-xs lg:text-sm leading-relaxed flex-grow">{partner.description}</p>

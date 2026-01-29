@@ -98,43 +98,56 @@ export default function FinancingPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {LEASING_PARTNERS.map((partner) => (
-                <div key={partner.name} className="bg-white rounded-3xl p-8 shadow-lg border border-slate-200 hover:border-orange-500 transition-all hover:shadow-xl group">
+                <div
+                  key={partner.name}
+                  className="bg-white rounded-3xl p-8 shadow-lg border border-slate-200 hover:border-orange-500 transition-all hover:shadow-xl group flex flex-col h-full"
+                >
                   {/* Partner Logo */}
                   <div className="flex justify-center mb-6">
-                    <div className="w-24 h-24 bg-slate-50 rounded-2xl flex items-center justify-center group-hover:bg-orange-50 transition-colors overflow-hidden p-4">
+                    <div className="w-28 h-28 bg-slate-50 rounded-3xl flex items-center justify-center group-hover:bg-orange-50 transition-colors overflow-hidden p-4 shadow-md group-hover:shadow-xl border border-slate-200/70 group-hover:border-orange-200">
                       <img
                         src={partner.logo}
                         alt={partner.name}
-                        className="w-full h-full object-contain opacity-70 group-hover:opacity-100 transition-opacity"
+                        className="w-full h-full object-contain opacity-80 group-hover:opacity-100 transition-opacity"
                         onError={handleImageError}
                       />
                     </div>
                   </div>
 
-                  {/* Partner Info */}
-                  <h3 className="text-2xl font-bold text-slate-900 mb-3 text-center">{partner.name}</h3>
-                  <p className="text-slate-600 mb-6 text-center leading-relaxed">{partner.description}</p>
+                  {/* Partner Info + Highlights */}
+                  <div className="flex-grow flex flex-col">
+                    <h3 className="text-xl lg:text-2xl font-bold text-slate-900 mb-3 text-center">
+                      {partner.name}
+                    </h3>
+                    <p className="text-slate-600 mb-6 text-center leading-relaxed">
+                      {partner.description}
+                    </p>
 
-                  {/* Highlights */}
-                  <div className="space-y-3 mb-6">
-                    {partner.highlights.map((highlight, idx) => (
-                      <div key={idx} className="flex items-center gap-3">
-                        <div className="w-5 h-5 bg-orange-100 rounded-full flex items-center justify-center shrink-0">
-                          <svg className="w-3 h-3 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
+                    {/* Highlights */}
+                    <div className="space-y-3 mb-6">
+                      {partner.highlights.map((highlight, idx) => (
+                        <div key={idx} className="flex items-center gap-3">
+                          <div className="w-5 h-5 bg-orange-100 rounded-full flex items-center justify-center shrink-0">
+                            <svg className="w-3 h-3 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                              <path
+                                fillRule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </div>
+                          <span className="text-sm text-slate-700 font-medium">{highlight}</span>
                         </div>
-                        <span className="text-sm text-slate-700 font-medium">{highlight}</span>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
 
                   {/* CTA */}
-                  <a 
-                    href={partner.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="block w-full bg-slate-900 text-white py-3 rounded-2xl font-bold text-center hover:bg-orange-500 transition-colors"
+                  <a
+                    href={partner.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-auto block w-full bg-slate-900 text-white py-3 rounded-2xl font-bold text-center hover:bg-orange-500 transition-colors"
                   >
                     Tìm hiểu thêm
                   </a>

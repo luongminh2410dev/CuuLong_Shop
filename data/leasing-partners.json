@@ -1,0 +1,35 @@
+[
+  {
+    "name": "Chailease (CILC)",
+    "logo": "/images/partners/chailease.png",
+    "url": "https://www.chailease.com.vn/",
+    "description": "Tập đoàn cho thuê tài chính hàng đầu khu vực với quy trình nhanh gọn và hạn mức cao.",
+    "highlights": [
+      "Hỗ trợ lên tới 90% giá trị máy",
+      "Thời hạn vay linh hoạt tới 5 năm",
+      "Thẩm định nhanh, giải ngân đúng tiến độ"
+    ]
+  },
+  {
+    "name": "ACB Leasing",
+    "logo": "/images/partners/acbl.png",
+    "url": "https://acbleasing.com.vn/",
+    "description": "Thành viên của ngân hàng ACB, cung cấp giải pháp tài chính an toàn và bền vững.",
+    "highlights": [
+      "Uy tín ngân hàng lớn",
+      "Thủ tục đơn giản, rõ ràng",
+      "Lãi suất cạnh tranh, ổn định"
+    ]
+  },
+  {
+    "name": "Vinaleasing (VILC)",
+    "logo": "/images/partners/vilc.jpg",
+    "url": "https://vinaleasing.com/",
+    "description": "Đối tác cho thuê tài chính nhiều kinh nghiệm trong ngành xây dựng và cơ giới tại Việt Nam.",
+    "highlights": [
+      "Linh hoạt với cả máy mới và máy đã qua sử dụng",
+      "Chính sách ưu đãi theo từng dự án",
+      "Tư vấn phương án vốn tối ưu cho doanh nghiệp"
+    ]
+  }
+]
