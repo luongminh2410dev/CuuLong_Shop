@@ -2,9 +2,8 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Equipment } from '@/types';
-import { EQUIPMENT_DATA, LEASING_PARTNERS } from '@/constants';
+import { EQUIPMENT_DATA } from '@/constants';
 import { BRAND_NAME, HOTLINE, ADDRESS, LOGO_URL, CATEGORIES } from '@/lib/constants';
 import { formatPrice, getProductImage, handleImageError } from '@/lib/utils';
 import { ZALO_URL, FACEBOOK_URL, MESSENGER_URL, PHONE_NUMBERS } from '@/lib/constants';
@@ -12,7 +11,6 @@ import Navigation from './Navigation';
 import Image from 'next/image';
 
 export default function HomePage() {
-  const router = useRouter();
   const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState<'none' | 'asc' | 'desc'>('none');
@@ -120,13 +118,18 @@ export default function HomePage() {
           <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[250px] lg:w-[400px] h-[250px] lg:h-[400px] bg-blue-100/30 rounded-full blur-3xl -z-10" />
           <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
             <div className="flex-1 text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 border border-orange-200/70 shadow-sm mb-4 lg:mb-5">
+                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-[0.22em] text-orange-600">
+                  Có hỗ trợ trả góp &amp; giải pháp tài chính
+                </span>
+              </div>
               <h1 className="text-2xl md:text-4xl lg:text-5xl lg:leading-[1.15] font-bold text-slate-900 leading-snug mb-4 lg:mb-6">
                 MÁY CÔNG TRÌNH <span className="text-orange-500">{BRAND_NAME}</span>
               </h1>
               <p className="text-base lg:text-xl text-slate-600 mb-6 lg:mb-8 max-w-2xl mx-auto lg:mx-0">
-                Phân phối thiết bị cơ giới chất lượng cao tại Hải Phòng cùng giải pháp tài chính linh hoạt nhất.
+                Phân phối thiết bị cơ giới chất lượng cao tại Hải Phòng, đi kèm <span className="font-semibold text-orange-600">giải pháp tài chính &amp; trả góp linh hoạt</span> để bạn dễ dàng sở hữu máy mới.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6 lg:mb-8">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-4 lg:mb-5">
                 <Link
                   href="/thiet-bi"
                   className="bg-orange-500 text-white px-6 py-3.5 lg:px-8 lg:py-4 rounded-2xl font-bold text-base lg:text-lg hover:bg-orange-600 transition-all shadow-xl shadow-orange-200 text-center"
@@ -137,6 +140,29 @@ export default function HomePage() {
                   Liên hệ ngay
                 </a>
               </div>
+              <div className="w-full max-w-xl mx-auto lg:mx-0 mb-6 lg:mb-8">
+                <div className="rounded-2xl border border-orange-100 bg-white/90 shadow-sm px-4 py-3 lg:px-5 lg:py-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div className="space-y-1">
+                      <p className="text-xs lg:text-sm font-semibold text-slate-800">
+                        Hỗ trợ tài chính khi mua máy
+                      </p>
+                      <p className="text-[11px] lg:text-xs text-slate-600">
+                        Trả góp tới <span className="font-semibold text-orange-600">90% giá trị</span>, thời hạn lên đến <span className="font-semibold text-orange-600">60 tháng</span>.
+                      </p>
+                    </div>
+                    <Link
+                      href="/tai-chinh"
+                      className="inline-flex items-center justify-center gap-1 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-[11px] lg:text-xs font-semibold px-3 py-2 whitespace-nowrap transition-colors"
+                    >
+                      Xem chi tiết
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </Link>
+                  </div>
+                </div>
+              </div>
               {/* Stats */}
               <div className="grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0">
                 <div className="text-center lg:text-left">
@@ -144,8 +170,8 @@ export default function HomePage() {
                   <div className="text-xs lg:text-sm text-slate-600">Sản phẩm</div>
                 </div>
                 <div className="text-center lg:text-left">
-                  <div className="text-2xl lg:text-3xl font-black text-orange-500 mb-1">24</div>
-                  <div className="text-xs lg:text-sm text-slate-600">Tháng bảo hành</div>
+                  <div className="text-2xl lg:text-3xl font-black text-orange-500 mb-1">500+</div>
+                  <div className="text-xs lg:text-sm text-slate-600">Khách hàng</div>
                 </div>
                 <div className="text-center lg:text-left">
                   <div className="text-2xl lg:text-3xl font-black text-orange-500 mb-1">10+</div>
@@ -268,61 +294,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Leasing Partners */}
-        <section id="leasing" className="py-12 lg:py-24 bg-gradient-to-b from-slate-50 to-white border-y border-slate-200 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-5">
-            <div className="absolute top-10 left-10 w-64 h-64 bg-orange-500 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
-          </div>
-          <div className="max-w-7xl mx-auto px-4 text-center mb-12 lg:mb-16 relative z-10">
-            <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-4">Giải pháp tài chính</h2>
-            <p className="text-sm lg:text-base text-slate-600 max-w-2xl mx-auto mb-6">Chúng tôi hợp tác với các định chế hàng đầu mang đến phương án tối ưu cho quý khách tại Hải Phòng và toàn quốc.</p>
-            <Link
-              href="/tai-chinh"
-              className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-2xl font-bold text-sm lg:text-base transition-colors shadow-lg shadow-orange-200"
-            >
-              <span>Tìm hiểu thêm về giải pháp tài chính</span>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
-          </div>
-          <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {LEASING_PARTNERS.map((partner) => (
-              <div key={partner.name} className="bg-white p-6 lg:p-8 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-sm border border-slate-200 hover:border-orange-500 transition-colors group flex flex-col">
-                <div className="h-20 lg:h-24 flex items-center justify-center mb-6 lg:mb-8">
-                  <div className="w-24 h-24 lg:w-28 lg:h-28 bg-slate-50 rounded-2xl lg:rounded-3xl flex items-center justify-center group-hover:bg-orange-50 transition-colors overflow-hidden p-4 shadow-sm group-hover:shadow-md">
-                    <img
-                      src={partner.logo}
-                      alt={partner.name}
-                      className="w-full h-full object-contain opacity-80 group-hover:opacity-100 transition-opacity"
-                    />
-                  </div>
-                </div>
-                <h3 className="text-lg lg:text-xl font-bold text-slate-900 mb-3 lg:mb-4">{partner.name}</h3>
-                <p className="text-slate-600 mb-6 text-xs lg:text-sm leading-relaxed flex-grow">{partner.description}</p>
-                <div className="space-y-2 lg:space-y-3 mb-6 lg:mb-8">
-                  {partner.highlights.map(h => (
-                    <div key={h} className="flex items-center gap-2 text-xs lg:text-sm font-medium text-slate-700">
-                      <div className="w-4 h-4 lg:w-5 lg:h-5 bg-orange-100 rounded-full flex items-center justify-center shrink-0">
-                        <svg className="w-2.5 h-2.5 lg:w-3 lg:h-3 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      {h}
-                    </div>
-                  ))}
-                </div>
-                <a href={partner.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-orange-600 font-bold text-sm">
-                  Website đối tác
-                  <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </a>
-              </div>
-            ))}
-          </div>
-        </section>
       </main>
 
       {/* Product Detail Modal */}
@@ -382,7 +353,7 @@ export default function HomePage() {
             <ul className="space-y-2">
               <li><Link href="/" className="hover:text-orange-500 transition-colors">Trang chủ</Link></li>
               <li><Link href="/thiet-bi" className="hover:text-orange-500 transition-colors">Thiết bị</Link></li>
-              <li><Link href="/#leasing" className="hover:text-orange-500 transition-colors">Giải pháp tài chính</Link></li>
+              <li><Link href="/tai-chinh" className="hover:text-orange-500 transition-colors">Giải pháp tài chính</Link></li>
               <li><Link href="/ve-chung-toi" className="hover:text-orange-500 transition-colors">Về chúng tôi</Link></li>
             </ul>
           </div>

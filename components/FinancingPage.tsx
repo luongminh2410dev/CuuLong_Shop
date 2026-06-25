@@ -103,8 +103,8 @@ export default function FinancingPage() {
                   className="bg-white rounded-3xl p-8 shadow-lg border border-slate-200 hover:border-orange-500 transition-all hover:shadow-xl group flex flex-col h-full"
                 >
                   {/* Partner Logo */}
-                  <div className="flex justify-center mb-6">
-                    <div className="w-28 h-28 bg-slate-50 rounded-3xl flex items-center justify-center group-hover:bg-orange-50 transition-colors overflow-hidden p-4 shadow-md group-hover:shadow-xl border border-slate-200/70 group-hover:border-orange-200">
+                  <div className="flex justify-center mb-5">
+                    <div className="w-24 h-24 bg-slate-50 rounded-3xl flex items-center justify-center group-hover:bg-orange-50 transition-colors overflow-hidden p-3 shadow-md group-hover:shadow-xl border border-slate-200/70 group-hover:border-orange-200">
                       <img
                         src={partner.logo}
                         alt={partner.name}
@@ -116,7 +116,7 @@ export default function FinancingPage() {
 
                   {/* Partner Info + Highlights */}
                   <div className="flex-grow flex flex-col">
-                    <h3 className="text-xl lg:text-2xl font-bold text-slate-900 mb-3 text-center">
+                    <h3 className="text-lg lg:text-xl font-bold text-slate-900 mb-2 text-center">
                       {partner.name}
                     </h3>
                     <p className="text-slate-600 mb-6 text-center leading-relaxed">
