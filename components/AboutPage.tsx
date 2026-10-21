@@ -179,7 +179,7 @@ export default function AboutPage() {
                       </svg>
                     </div>
                     <div>
-                      <p className="font-semibold mb-1">Địa chỉ</p>
+                      <p className="font-semibold mb-1">Địa chỉ B</p>
                       <p className="text-slate-300">{ADDRESS}</p>
                     </div>
                   </div>
